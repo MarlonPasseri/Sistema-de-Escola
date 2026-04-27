@@ -18,6 +18,13 @@ out
 
 # Prisma
 prisma/generated
+apps/api/prisma/seed.js
+apps/api/prisma/seed.js.map
+apps/api/prisma/seed.d.ts
+apps/api/prisma/seed.d.ts.map
+
+# Claude Code settings
+.claude
 
 # Logs
 *.log
