@@ -49,7 +49,9 @@
       "Bash(pnpm --filter @edupulse/web dev)",
       "Bash(git init *)",
       "Bash(git config *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(git -C /c/Users/marlon.soares/EDUPULSE/Sistema-de-Escola log --oneline -10)",
+      "Bash(git -C /c/Users/marlon.soares/EDUPULSE/Sistema-de-Escola branch -a)"
     ]
   }
 }
