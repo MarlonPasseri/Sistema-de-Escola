@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, CalendarCheck, Mail, Plus, ShieldAlert, UserRound } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, CalendarCheck, Mail, Plus, ShieldAlert, UserRound } from 'lucide-react';
 import Link from 'next/link';
 import { RiskLevel } from '@edupulse/types';
 import { RiskBadge } from '@/components/ui/risk-badge';
@@ -41,6 +41,14 @@ function useReportCard(id: string) {
   });
 }
 
+function useOccurrences(id: string) {
+  return useQuery({
+    queryKey: ['students', id, 'occurrences'],
+    queryFn: () => api.get('/occurrences', { params: { studentId: id, limit: 20 } }).then((r) => r.data),
+    enabled: Boolean(id),
+  });
+}
+
 export default function StudentDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
@@ -49,7 +57,9 @@ export default function StudentDetailPage() {
   const { data: timeline } = useTimeline(id);
   const { data: attendance } = useAttendance(id);
   const { data: reportCard } = useReportCard(id);
+  const { data: occurrences } = useOccurrences(id);
   const [guardian, setGuardian] = useState({ name: '', phone: '', email: '', relationship: 'Responsavel' });
+  const [occurrence, setOccurrence] = useState({ type: 'DISCIPLINARY', description: '' });
   const [error, setError] = useState('');
 
   const addGuardian = useMutation({
@@ -60,6 +70,17 @@ export default function StudentDetailPage() {
       queryClient.invalidateQueries({ queryKey: ['students', id, 'timeline'] });
     },
     onError: (err: any) => setError(err.response?.data?.message ?? 'Nao foi possivel vincular o responsavel.'),
+  });
+
+  const addOccurrence = useMutation({
+    mutationFn: () => api.post('/occurrences', { studentId: id, ...occurrence }),
+    onSuccess: () => {
+      setOccurrence({ type: 'DISCIPLINARY', description: '' });
+      queryClient.invalidateQueries({ queryKey: ['students', id] });
+      queryClient.invalidateQueries({ queryKey: ['students', id, 'timeline'] });
+      queryClient.invalidateQueries({ queryKey: ['students', id, 'occurrences'] });
+    },
+    onError: (err: any) => setError(err.response?.data?.message ?? 'Nao foi possivel registrar a ocorrencia.'),
   });
 
   if (isLoading) {
@@ -130,6 +151,7 @@ export default function StudentDetailPage() {
           </div>
         </section>
 
+        <div className="space-y-5">
         <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
           <h2 className="mb-4 font-semibold text-text-primary">Adicionar responsavel</h2>
           <form
@@ -150,6 +172,51 @@ export default function StudentDetailPage() {
             </button>
           </form>
         </section>
+        <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
+          <div className="mb-4 flex items-center gap-2">
+            <AlertTriangle size={18} className="text-warning" />
+            <h2 className="font-semibold text-text-primary">Ocorrencias</h2>
+          </div>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              setError('');
+              addOccurrence.mutate();
+            }}
+            className="space-y-3"
+          >
+            <select
+              value={occurrence.type}
+              onChange={(event) => setOccurrence((current) => ({ ...current, type: event.target.value }))}
+              className="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+            >
+              <option value="DISCIPLINARY">Disciplinar</option>
+              <option value="PARTICIPATION">Participacao</option>
+              <option value="ACADEMIC">Academica</option>
+              <option value="OTHER">Outra</option>
+            </select>
+            <textarea
+              required
+              rows={3}
+              placeholder="Descricao da ocorrencia"
+              value={occurrence.description}
+              onChange={(event) => setOccurrence((current) => ({ ...current, description: event.target.value }))}
+              className="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
+            />
+            <button disabled={addOccurrence.isPending} className="flex w-full items-center justify-center gap-2 rounded-lg bg-warning px-3 py-2 text-sm font-semibold text-white disabled:opacity-60">
+              <Plus size={16} /> Registrar ocorrencia
+            </button>
+          </form>
+          <div className="mt-4 space-y-2">
+            {occurrences?.data?.length ? occurrences.data.map((item: any) => (
+              <div key={item.id} className="rounded-lg border border-border px-3 py-2">
+                <p className="text-sm font-medium text-text-primary">{item.description}</p>
+                <p className="text-xs text-text-secondary">{item.type} - {new Date(item.date).toLocaleDateString('pt-BR')}</p>
+              </div>
+            )) : <p className="text-sm text-text-secondary">Nenhuma ocorrencia registrada.</p>}
+          </div>
+        </section>
+        </div>
       </div>
 
       <section className="rounded-xl border border-border bg-card p-5 shadow-sm">
