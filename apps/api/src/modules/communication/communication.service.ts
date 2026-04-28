@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { RiskEngineService } from '../student-success/risk-engine.service';
@@ -72,7 +71,7 @@ export class CommunicationService {
 
   async list(actor: AuthUser, dto: ListAnnouncementsDto) {
     const { schoolId, id: userId, role } = actor;
-    const { page = 1, limit = 20, audience, search, unreadOnly } = dto;
+    const { page = 1, limit = 20, audience, search } = dto;
     const skip = (page - 1) * limit;
 
     // GUARDIAN/STUDENT see only their own announcements via recipients

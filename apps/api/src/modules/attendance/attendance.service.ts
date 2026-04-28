@@ -164,8 +164,6 @@ export class AttendanceService {
 
     // Add timeline events for absences and recalculate risk
     const absentStudents = dto.records.filter((r) => r.status === 'ABSENT');
-    const schoolId = session.classSubject.class.schoolId;
-
     await Promise.all(
       absentStudents.map(async (r) => {
         await this.studentsService.addTimelineEvent(

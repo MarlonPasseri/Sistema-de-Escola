@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPulse — Gestão Escolar Inteligente</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+/* ─── Reset & Base ─────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563EB;--blue-light:#60A5FA;--purple:#7C3AED;--cyan:#06B6D4;
+  --green:#22C55E;--amber:#F59E0B;--red:#EF4444;
+  --navy:#0F172A;--fg1:#0F172A;--fg2:#64748B;--fg3:#94A3B8;
+  --bg:#F8FAFC;--card:#FFFFFF;--border:#E2E8F0;
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --ease-spring:cubic-bezier(0.34,1.56,0.64,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#fff;color:var(--fg1);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ─── Navbar ───────────────────────────────────────────────────────────── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 40px;height:68px;display:flex;align-items:center;justify-content:space-between;transition:background .3s,backdrop-filter .3s,box-shadow .3s}
+nav.scrolled{background:rgba(255,255,255,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo-icon{width:34px;height:34px;background:linear-gradient(to bottom right,#3B82F6,#7C3AED);border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.nav-logo-text{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+.nav-logo-text em{background:linear-gradient(135deg,#2563EB,#7C3AED);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-style:normal}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:14px;font-weight:500;color:var(--fg2);text-decoration:none;transition:color .15s}
+.nav-links a:hover{color:var(--fg1)}
+.nav-cta{display:flex;align-items:center;gap:10px}
+.btn-demo{padding:9px 18px;border-radius:10px;border:1px solid var(--border);font-family:inherit;font-size:14px;font-weight:600;color:var(--fg1);background:white;cursor:pointer;transition:all .15s}
+.btn-demo,.btn-enter,.btn-hero-primary,.btn-hero-outline,.btn-cta-primary,.btn-cta-outline{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn-demo:hover{border-color:#c7d2fe;background:#f5f3ff}
+.btn-enter{padding:9px 20px;border-radius:10px;border:none;font-family:inherit;font-size:14px;font-weight:700;color:white;background:linear-gradient(to right,#2563EB,#7C3AED);cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.3);transition:all .2s}
+.btn-enter:hover{box-shadow:0 6px 20px rgba(37,99,235,.45);transform:translateY(-1px)}
+
+/* ─── Hero ─────────────────────────────────────────────────────────────── */
+#hero{min-height:100vh;background:linear-gradient(160deg,#F8FAFC 0%,#EEF6FF 50%,#F0F7FF 100%);display:flex;align-items:center;position:relative;overflow:hidden;padding:0 60px}
+.hero-bg-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(37,99,235,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(37,99,235,.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+.hero-glow{position:absolute;top:10%;right:5%;width:700px;height:700px;background:radial-gradient(circle,rgba(37,99,235,.1) 0%,transparent 65%);border-radius:50%;pointer-events:none}
+.hero-glow-2{position:absolute;bottom:5%;left:10%;width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.08) 0%,transparent 65%);border-radius:50%;pointer-events:none}
+
+.hero-content{position:relative;z-index:2;max-width:560px;padding-top:80px}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.15);border-radius:9999px;font-size:12px;font-weight:700;color:#2563EB;margin-bottom:24px;letter-spacing:.02em}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#2563EB;animation:blink 2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-title{font-size:clamp(40px,5vw,62px);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:var(--navy);margin-bottom:20px}
+.hero-title span{background:linear-gradient(135deg,#2563EB 0%,#7C3AED 60%,#06B6D4 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:17px;line-height:1.65;color:var(--fg2);margin-bottom:36px;max-width:480px}
+.hero-btns{display:flex;gap:12px;align-items:center;margin-bottom:48px}
+.btn-hero-primary{padding:14px 28px;background:linear-gradient(to right,#2563EB,#7C3AED);color:white;border:none;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px rgba(37,99,235,.3);transition:all .2s}
+.btn-hero-primary:hover{box-shadow:0 12px 32px rgba(37,99,235,.45);transform:translateY(-2px)}
+.btn-hero-outline{padding:14px 24px;background:white;color:var(--fg1);border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-hero-outline:hover{border-color:#c7d2fe}
+.hero-stats{display:flex;gap:28px}
+.hero-stat{display:flex;flex-direction:column}
+.hero-stat-val{font-size:22px;font-weight:800;color:var(--navy);line-height:1}
+.hero-stat-lbl{font-size:12px;color:var(--fg3);margin-top:3px}
+
+/* Hero visual */
+.hero-visual{position:absolute;right:-20px;top:50%;transform:translateY(-50%);width:680px;height:580px}
+.layer{position:absolute;will-change:transform}
+
+/* Dashboard mockup */
+.dash-mock{width:520px;background:white;border-radius:20px;border:1px solid #E2E8F0;box-shadow:0 40px 80px rgba(0,0,0,.12),0 8px 20px rgba(0,0,0,.06);padding:20px;overflow:hidden}
+.dash-mock-bar{height:40px;background:#F8FAFC;border-radius:10px;margin-bottom:14px;display:flex;align-items:center;padding:0 12px;gap:8px}
+.dash-mock-dot{width:10px;height:10px;border-radius:50%}
+.dash-mock-url{height:18px;background:#E2E8F0;border-radius:4px;flex:1}
+.dash-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.dash-stat-mini{background:#F8FAFC;border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:4px}
+.dash-stat-mini-val{font-size:15px;font-weight:800;color:var(--navy)}
+.dash-stat-mini-lbl{font-size:9px;color:var(--fg3);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.dash-chart-row{display:grid;grid-template-columns:1.4fr 1fr;gap:8px}
+.dash-chart{background:#F8FAFC;border-radius:10px;padding:12px}
+.dash-chart-title{font-size:10px;font-weight:700;color:var(--fg2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.chart-bars{display:flex;align-items:flex-end;gap:4px;height:60px}
+.chart-bar{flex:1;border-radius:4px 4px 0 0;background:linear-gradient(to top,#2563EB,#60A5FA);opacity:.85;transition:opacity .2s}
+.chart-bar:hover{opacity:1}
+.dash-list{background:#F8FAFC;border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.dash-list-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid #E2E8F0;font-size:10px;color:var(--fg2)}
+.dash-list-item:last-child{border-bottom:none}
+.dash-list-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(to bottom right,#CBD5E1,#94A3B8);font-size:8px;font-weight:700;color:#475569;display:flex;align-items:center;justify-content:center}
+.dash-risk-badge{padding:1px 6px;border-radius:4px;font-size:8px;font-weight:700;margin-left:auto}
+
+/* Floating metric cards */
+.metric-card{background:white;border:1px solid #E2E8F0;border-radius:14px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,.08);display:flex;align-items:center;gap:10px;white-space:nowrap}
+.metric-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.metric-val{font-size:14px;font-weight:800;color:var(--navy);line-height:1}
+.metric-lbl{font-size:11px;color:var(--fg3);margin-top:2px}
+
+/* Connection lines */
+.conn-lines{position:absolute;inset:0;pointer-events:none}
+
+/* Particles */
+.particle{position:absolute;border-radius:50%;pointer-events:none;animation:float-particle linear infinite}
+@keyframes float-particle{0%{transform:translateX(0) translateY(0);opacity:.6}50%{opacity:1}100%{transform:translateX(var(--dx)) translateY(var(--dy));opacity:.2}}
+
+/* Orbiting shapes */
+.shape-ring{position:absolute;border-radius:50%;border:1.5px solid rgba(37,99,235,.12);pointer-events:none;animation:ring-spin linear infinite}
+@keyframes ring-spin{from{transform:rotate(0deg) scale(1)}to{transform:rotate(360deg) scale(1)}}
+
+/* ─── Section Helpers ──────────────────────────────────────────────────── */
+section{position:relative;overflow:hidden}
+.container{max-width:1200px;margin:0 auto;padding:0 40px}
+.section-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:9999px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:16px}
+.section-title{font-size:clamp(32px,4vw,48px);font-weight:800;line-height:1.1;letter-spacing:-.025em;color:var(--navy);margin-bottom:16px}
+.section-sub{font-size:17px;color:var(--fg2);line-height:1.65;max-width:520px}
+
+/* Reveal animations */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .65s var(--ease-out),transform .65s var(--ease-out)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .65s var(--ease-out),transform .65s var(--ease-out)}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .65s var(--ease-out),transform .65s var(--ease-out)}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(.92);transition:opacity .5s var(--ease-out),transform .5s var(--ease-out)}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
+
+/* ─── Section 3: Overview ──────────────────────────────────────────────── */
+#overview{padding:120px 0;background:linear-gradient(180deg,#fff 0%,#F8FAFC 100%)}
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.overview-cards-stack{position:relative;height:500px}
+.overview-card{position:absolute;background:white;border:1px solid #E2E8F0;border-radius:16px;padding:14px 18px;box-shadow:0 4px 16px rgba(0,0,0,.06);display:flex;align-items:center;gap:12px;width:260px;transition:transform .3s var(--ease-out);cursor:default}
+.overview-card:hover{transform:translateY(-4px) scale(1.02)!important;box-shadow:0 12px 32px rgba(0,0,0,.12)}
+.oc-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.oc-title{font-size:13px;font-weight:700;color:var(--navy)}
+.oc-desc{font-size:11px;color:var(--fg3);margin-top:2px}
+
+/* ─── Section 4: Features ──────────────────────────────────────────────── */
+#features{padding:120px 0;background:#fff;position:relative}
+.features-bg{position:absolute;inset:0;background:linear-gradient(135deg,rgba(37,99,235,.02) 0%,transparent 50%,rgba(124,58,237,.02) 100%)}
+.features-bg-line{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(37,99,235,.15),transparent)}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:60px}
+.feature-card{background:white;border:1px solid #E2E8F0;border-radius:20px;padding:28px;position:relative;overflow:hidden;transition:all .25s var(--ease-out);cursor:default}
+.feature-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(37,99,235,.04),rgba(124,58,237,.04));opacity:0;transition:opacity .25s}
+.feature-card:hover{border-color:rgba(37,99,235,.25);box-shadow:0 12px 40px rgba(0,0,0,.08);transform:translateY(-4px)}
+.feature-card:hover::before{opacity:1}
+.fc-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;position:relative;z-index:1}
+.fc-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;position:relative;z-index:1}
+.fc-desc{font-size:13px;color:var(--fg2);line-height:1.6;position:relative;z-index:1}
+.feature-card .fc-glow{position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;opacity:0;transition:opacity .3s}
+.feature-card:hover .fc-glow{opacity:1}
+
+/* ─── Section 5: Dashboard dark ───────────────────────────────────────── */
+#dashboard-section{padding:120px 0;background:linear-gradient(160deg,#0F172A 0%,#1e2d4a 50%,#0F172A 100%);position:relative;overflow:hidden}
+.ds-grid-pattern{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none}
+.ds-glow-1{position:absolute;top:-100px;left:20%;width:600px;height:600px;background:radial-gradient(circle,rgba(37,99,235,.2),transparent 65%);border-radius:50%;pointer-events:none}
+.ds-glow-2{position:absolute;bottom:-100px;right:15%;width:500px;height:500px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);border-radius:50%;pointer-events:none}
+#dashboard-section .section-title{color:white}
+#dashboard-section .section-sub{color:rgba(255,255,255,.6)}
+#dashboard-section .section-badge{background:rgba(96,165,250,.15);color:#60A5FA;border:1px solid rgba(96,165,250,.2)}
+.ds-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:60px;align-items:start}
+.ds-panel{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:20px;backdrop-filter:blur(8px)}
+.ds-panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.4);margin-bottom:16px}
+.ds-kpi-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.ds-kpi{background:rgba(255,255,255,.06);border-radius:12px;padding:14px}
+.ds-kpi-val{font-size:26px;font-weight:800;line-height:1}
+.ds-kpi-lbl{font-size:11px;color:rgba(255,255,255,.4);margin-top:4px}
+.ds-chart-area{background:rgba(255,255,255,.04);border-radius:12px;padding:14px}
+.ds-bar-chart{display:flex;align-items:flex-end;gap:6px;height:80px;margin-top:8px}
+.ds-bar{flex:1;border-radius:4px 4px 0 0;transition:height .8s var(--ease-out)}
+.ds-bar-label{font-size:8px;color:rgba(255,255,255,.3);text-align:center;margin-top:4px}
+.ds-risk-list{display:flex;flex-direction:column;gap:6px}
+.ds-risk-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:10px}
+.ds-risk-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.85);flex:1}
+.ds-risk-bar{flex:2;height:4px;background:rgba(255,255,255,.1);border-radius:9999px;overflow:hidden}
+.ds-risk-fill{height:100%;border-radius:9999px}
+.ds-risk-score{font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;min-width:24px;text-align:right}
+.counter{display:inline-block}
+
+/* ─── Section 6: Diferenciais ─────────────────────────────────────────── */
+#diferenciais{padding:120px 0;background:#fff}
+.dif-list{margin-top:60px;display:flex;flex-direction:column;gap:0}
+.dif-item{display:grid;grid-template-columns:64px 1fr;gap:24px;padding:24px 32px;border-radius:16px;transition:all .3s var(--ease-out);cursor:default;border:1px solid transparent;position:relative}
+.dif-item.focused{background:linear-gradient(to right,rgba(37,99,235,.04),rgba(124,58,237,.02));border-color:rgba(37,99,235,.1);transform:scale(1.01)}
+.dif-item.focused .dif-icon{background:linear-gradient(to bottom right,#2563EB,#7C3AED)}
+.dif-item.focused .dif-icon svg{color:white}
+.dif-num{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--fg3);padding-top:4px}
+.dif-icon{width:48px;height:48px;border-radius:14px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;transition:all .3s;flex-shrink:0}
+.dif-body{display:flex;gap:20px;align-items:center}
+.dif-text-wrap{flex:1}
+.dif-title{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:5px}
+.dif-desc{font-size:14px;color:var(--fg2);line-height:1.6}
+
+/* ─── Section 7: Flow ──────────────────────────────────────────────────── */
+#flow{padding:120px 0;background:linear-gradient(180deg,#F8FAFC 0%,#EEF6FF 100%)}
+.flow-steps{position:relative;margin-top:60px;max-width:800px;margin-left:auto;margin-right:auto}
+.flow-line-track{position:absolute;left:31px;top:24px;bottom:24px;width:2px;background:#E2E8F0}
+.flow-line-fill{position:absolute;left:31px;top:24px;width:2px;background:linear-gradient(to bottom,#2563EB,#7C3AED);height:0%;transition:height 1s var(--ease-out)}
+.flow-step{display:grid;grid-template-columns:64px 1fr;gap:24px;margin-bottom:24px;position:relative}
+.flow-dot{width:64px;height:64px;border-radius:50%;background:white;border:2px solid #E2E8F0;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;transition:all .4s var(--ease-out);flex-shrink:0}
+.flow-dot.active{border-color:#2563EB;background:linear-gradient(to bottom right,#2563EB,#7C3AED);box-shadow:0 0 0 6px rgba(37,99,235,.12)}
+.flow-dot.active svg{color:white!important}
+.flow-dot-icon{}
+.flow-card{background:white;border:1px solid #E2E8F0;border-radius:16px;padding:18px 22px;transition:all .35s var(--ease-out)}
+.flow-step.active .flow-card{border-color:rgba(37,99,235,.2);box-shadow:0 4px 20px rgba(37,99,235,.1)}
+.flow-step-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue);margin-bottom:4px}
+.flow-step-title{font-size:15px;font-weight:700;color:var(--navy)}
+.flow-step-desc{font-size:13px;color:var(--fg2);margin-top:4px;line-height:1.6}
+
+/* ─── Section 8: Profiles ──────────────────────────────────────────────── */
+#profiles{padding:120px 0;background:#fff}
+.profiles-tabs{display:flex;gap:8px;margin:40px 0 0;border-bottom:1px solid #E2E8F0;padding-bottom:0}
+.prof-tab{padding:10px 20px;font-size:14px;font-weight:600;color:var(--fg3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.prof-tab:hover{color:var(--fg1)}
+.prof-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.profiles-content{margin-top:32px}
+.prof-panel{display:none;animation:fadeIn .3s var(--ease-out)}
+.prof-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.prof-info{}
+.prof-avatar-wrap{width:80px;height:80px;border-radius:24px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:32px}
+.prof-role-badge{display:inline-block;padding:4px 12px;border-radius:8px;font-size:12px;font-weight:700;margin-bottom:16px}
+.prof-title{font-size:26px;font-weight:800;color:var(--navy);margin-bottom:10px;letter-spacing:-.02em}
+.prof-desc{font-size:15px;color:var(--fg2);line-height:1.7;margin-bottom:20px}
+.prof-perms{display:flex;flex-direction:column;gap:6px}
+.prof-perm{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--fg2)}
+.perm-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.prof-visual{background:linear-gradient(135deg,#F8FAFC,#EEF6FF);border-radius:24px;padding:28px;border:1px solid #E2E8F0}
+.prof-screen-mock{background:white;border-radius:14px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.prof-screen-header{height:36px;background:#F8FAFC;border-radius:8px;margin-bottom:12px;display:flex;align-items:center;padding:0 12px;gap:6px}
+.prof-screen-dot{width:8px;height:8px;border-radius:50%}
+.prof-screen-rows{display:flex;flex-direction:column;gap:6px}
+.prof-screen-row{height:28px;background:#F8FAFC;border-radius:6px}
+.prof-screen-row-highlight{height:28px;border-radius:6px}
+
+/* ─── Section 9: CTA ───────────────────────────────────────────────────── */
+#cta{padding:140px 0;background:linear-gradient(160deg,#0F172A 0%,#1a2744 40%,#1e1040 100%);position:relative;overflow:hidden;text-align:center}
+.cta-glow-1{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:800px;height:400px;background:radial-gradient(ellipse,rgba(37,99,235,.25),transparent 65%);pointer-events:none}
+.cta-glow-2{position:absolute;top:20%;right:15%;width:400px;height:400px;background:radial-gradient(circle,rgba(124,58,237,.15),transparent 65%);pointer-events:none;border-radius:50%}
+.cta-title{font-size:clamp(36px,5vw,60px);font-weight:800;line-height:1.08;letter-spacing:-.03em;color:white;margin-bottom:20px;position:relative;z-index:1}
+.cta-sub{font-size:18px;color:rgba(255,255,255,.6);line-height:1.7;max-width:560px;margin:0 auto 40px;position:relative;z-index:1}
+.cta-btns{display:flex;gap:14px;justify-content:center;position:relative;z-index:1}
+.btn-cta-primary{padding:16px 32px;background:linear-gradient(to right,#2563EB,#7C3AED);color:white;border:none;border-radius:14px;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 8px 32px rgba(37,99,235,.4);transition:all .2s}
+.btn-cta-primary:hover{box-shadow:0 12px 40px rgba(37,99,235,.55);transform:translateY(-2px)}
+.btn-cta-outline{padding:16px 28px;background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.15);border-radius:14px;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;backdrop-filter:blur(8px)}
+.btn-cta-outline:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.3)}
+/* Floating dashboard in CTA bg */
+.cta-float-card{position:absolute;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:16px;backdrop-filter:blur(10px);padding:16px 20px}
+.cta-float-1{width:200px;top:15%;left:5%;animation:float-y 6s ease-in-out infinite}
+.cta-float-2{width:180px;bottom:20%;right:6%;animation:float-y 8s ease-in-out infinite .5s}
+.cta-float-3{width:160px;top:55%;left:8%;animation:float-y 7s ease-in-out infinite 1s}
+@keyframes float-y{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.cf-label{font-size:10px;color:rgba(255,255,255,.4);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.cf-val{font-size:20px;font-weight:800;color:white;line-height:1}
+.cf-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
+
+/* ─── Footer ───────────────────────────────────────────────────────────── */
+footer{background:#0A0F1E;color:rgba(255,255,255,.5);padding:60px 0 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-brand-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.footer-brand-icon{width:32px;height:32px;background:linear-gradient(to bottom right,#3B82F6,#7C3AED);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.footer-brand-name{font-size:18px;font-weight:800;color:white}
+.footer-brand-name em{color:#60A5FA;font-style:normal}
+.footer-desc{font-size:13px;line-height:1.7;max-width:260px}
+.footer-col-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.7);margin-bottom:16px}
+.footer-links{display:flex;flex-direction:column;gap:8px}
+.footer-links a{font-size:13px;color:rgba(255,255,255,.4);text-decoration:none;transition:color .15s}
+.footer-links a:hover{color:rgba(255,255,255,.8)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.06);padding-top:24px;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+.footer-bottom a{color:rgba(255,255,255,.3);text-decoration:none}
+.footer-bottom a:hover{color:rgba(255,255,255,.6)}
+
+/* ─── Scrollbar ────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#CBD5E1;border-radius:9999px}
+
+/* ─── Extra parallax layers ────────────────────────────────────────────── */
+.hero-depth-bg{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.depth-stripe{position:absolute;width:100%;height:2px;background:linear-gradient(to right,transparent,rgba(37,99,235,.08),transparent)}
+.depth-circle{position:absolute;border-radius:50%;border:1px solid rgba(37,99,235,.08);pointer-events:none}
+.depth-blob{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;will-change:transform}
+
+/* Tilt wrapper for 3D perspective */
+.tilt-wrap{transform-style:preserve-3d;transition:transform .08s linear;will-change:transform}
+.tilt-inner{transform:translateZ(0);transition:transform .08s linear;will-change:transform}
+
+/* Parallax depth label */
+.depth-tag{position:absolute;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(37,99,235,.35);white-space:nowrap;pointer-events:none}
+
+/* Horizontal drift band between sections */
+.drift-band{overflow:hidden;height:60px;position:relative;background:transparent;pointer-events:none}
+.drift-track{display:flex;gap:32px;white-space:nowrap;position:absolute;top:50%;transform:translateY(-50%);will-change:transform}
+.drift-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:9999px;background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.08);font-size:11px;font-weight:600;color:rgba(37,99,235,.4);white-space:nowrap}
+
+/* Parallax scroll indicator */
+.scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;z-index:4;animation:scroll-bounce 2s ease-in-out infinite}
+@keyframes scroll-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,rgba(37,99,235,.5),transparent)}
+.scroll-dot{width:6px;height:6px;border-radius:50%;background:#2563EB;opacity:.5}
+
+/* Section bg transitions */
+.section-morph{transition:background 1s ease}
+
+/* Features parallax section bg */
+#features .feat-bg-el{position:absolute;pointer-events:none;border-radius:50%;filter:blur(80px);will-change:transform}
+
+/* Overview floating depth element */
+.ov-depth-el{position:absolute;pointer-events:none;will-change:transform}
+
+/* CTA particles */
+#cta canvas{position:absolute;inset:0;pointer-events:none;z-index:0}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAVBAR ═══════════════════════════════════════════════════════════ -->
+<nav id="navbar">
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">
+      <i data-lucide="zap" style="width:16px;height:16px;color:white;stroke-width:2.5"></i>
+    </div>
+    <div class="nav-logo-text">Edu<em>Pulse</em></div>
+  </a>
+  <div class="nav-links">
+    <a href="#overview">Plataforma</a>
+    <a href="#features">Recursos</a>
+    <a href="#diferenciais">Diferenciais</a>
+    <a href="#profiles">Gestão</a>
+    <a href="#cta">Acesso</a>
+  </div>
+  <div class="nav-cta">
+    <a href="#dashboard-section" class="btn-demo">Ver demonstração</a>
+    <a href="/login" target="_top" class="btn-enter">Entrar no sistema</a>
+  </div>
+</nav>
+
+<!-- ═══ HERO ══════════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-bg-grid" id="hero-grid"></div>
+  <div class="hero-glow" id="hero-glow"></div>
+  <div class="hero-glow-2" id="hero-glow-2"></div>
+
+  <!-- Extra depth blobs -->
+  <div class="depth-blob" id="blob-a" style="width:300px;height:300px;background:rgba(6,182,212,.07);top:20%;right:35%"></div>
+  <div class="depth-blob" id="blob-b" style="width:200px;height:200px;background:rgba(124,58,237,.06);bottom:25%;right:20%"></div>
+  <div class="depth-blob" id="blob-c" style="width:160px;height:160px;background:rgba(34,197,94,.05);top:55%;left:30%"></div>
+
+  <!-- Depth horizontal stripes -->
+  <div class="depth-stripe" id="stripe-1" style="top:28%;opacity:.5"></div>
+  <div class="depth-stripe" id="stripe-2" style="top:52%;opacity:.35"></div>
+  <div class="depth-stripe" id="stripe-3" style="top:74%;opacity:.2"></div>
+
+  <!-- Depth circles at different z-levels -->
+  <div class="depth-circle" id="dc-1" style="width:80px;height:80px;top:22%;left:42%;opacity:.4"></div>
+  <div class="depth-circle" id="dc-2" style="width:40px;height:40px;top:64%;right:28%;opacity:.3;border-color:rgba(124,58,237,.15)"></div>
+  <div class="depth-circle" id="dc-3" style="width:120px;height:120px;bottom:18%;left:22%;opacity:.25;border-color:rgba(6,182,212,.12)"></div>
+
+  <!-- Particles -->
+  <canvas id="particle-canvas" style="position:absolute;inset:0;pointer-events:none;z-index:1"></canvas>
+
+  <!-- Shape rings -->
+  <div class="shape-ring" id="ring-1" style="width:400px;height:400px;right:160px;top:50%;margin-top:-200px;animation-duration:40s"></div>
+  <div class="shape-ring" id="ring-2" style="width:600px;height:600px;right:60px;top:50%;margin-top:-300px;animation-duration:60s;border-color:rgba(124,58,237,.08)"></div>
+  <div class="shape-ring" id="ring-3" style="width:260px;height:260px;left:15%;bottom:15%;animation-duration:30s;border-color:rgba(6,182,212,.06)"></div>
+
+  <!-- Scroll indicator -->
+  <div class="scroll-indicator" id="scroll-ind">
+    <div class="scroll-dot"></div>
+    <div class="scroll-line"></div>
+  </div>
+
+  <!-- Left content -->
+  <div class="hero-content" style="position:relative;z-index:3">
+    <div class="hero-badge" id="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Plataforma SaaS Educacional
+    </div>
+    <h1 class="hero-title" id="hero-title">
+      Gestão escolar<br><span>inteligente, fluida</span><br>e conectada.
+    </h1>
+    <p class="hero-sub" id="hero-sub">Centralize alunos, professores, turmas, frequência, desempenho e comunicação em uma plataforma moderna feita para escolas que querem evoluir.</p>
+    <div class="hero-btns" id="hero-btns">
+      <a href="/login" target="_top" class="btn-hero-primary">Acessar plataforma</a>
+      <a href="#dashboard-section" class="btn-hero-outline">Ver demonstração →</a>
+    </div>
+    <div class="hero-stats" id="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-val counter-anim" data-target="1248">1.248</div><div class="hero-stat-lbl">alunos ativos</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">97%</div><div class="hero-stat-lbl">frequência média</div></div>
+      <div class="hero-stat"><div class="hero-stat-val">32</div><div class="hero-stat-lbl">turmas em andamento</div></div>
+    </div>
+  </div>
+
+  <!-- Hero visual layers -->
+  <div class="hero-visual" id="hero-visual" style="perspective:1000px">
+    <div class="tilt-wrap" id="tilt-wrap">
+    <!-- Background depth dashboard (blurred, behind) -->
+    <div class="layer" id="layer-bg-dash" style="top:80px;left:60px;opacity:.18;filter:blur(3px);transform:scale(.96) translateZ(-40px)">
+      <div class="dash-mock" style="width:500px;background:linear-gradient(135deg,#dbeafe,#ede9fe)"></div>
+    </div>
+
+    <!-- Connection lines SVG -->
+    <svg class="conn-lines" id="conn-svg" viewBox="0 0 680 580">
+      <defs>
+        <linearGradient id="line-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#2563EB" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.1"/>
+        </linearGradient>
+      </defs>
+      <path d="M 420 180 Q 340 240 310 220" stroke="url(#line-grad)" stroke-width="1.5" fill="none" stroke-dasharray="4 4" opacity="0.6"/>
+      <path d="M 500 320 Q 400 300 310 280" stroke="url(#line-grad)" stroke-width="1.5" fill="none" stroke-dasharray="4 4" opacity="0.5"/>
+      <path d="M 100 200 Q 180 240 210 220" stroke="url(#line-grad)" stroke-width="1.5" fill="none" stroke-dasharray="4 4" opacity="0.5"/>
+      <path d="M 90 380 Q 160 340 210 320" stroke="url(#line-grad)" stroke-width="1.5" fill="none" stroke-dasharray="4 4" opacity="0.4"/>
+      <circle cx="420" cy="180" r="4" fill="#2563EB" opacity="0.4"/>
+      <circle cx="500" cy="320" r="4" fill="#7C3AED" opacity="0.4"/>
+      <circle cx="100" cy="200" r="4" fill="#06B6D4" opacity="0.4"/>
+      <circle cx="90" cy="380" r="4" fill="#22C55E" opacity="0.4"/>
+    </svg>
+
+    <!-- Main dashboard — layer 0 (slowest) -->
+    <div class="layer" id="layer-dash" style="top:60px;left:80px">
+      <div class="dash-mock">
+        <div class="dash-mock-bar">
+          <div class="dash-mock-dot" style="background:#EF4444"></div>
+          <div class="dash-mock-dot" style="background:#F59E0B"></div>
+          <div class="dash-mock-dot" style="background:#22C55E"></div>
+          <div class="dash-mock-url"></div>
+        </div>
+        <div class="dash-stats-row">
+          <div class="dash-stat-mini"><div class="dash-stat-mini-val" style="color:#2563EB">1.248</div><div class="dash-stat-mini-lbl">Alunos</div></div>
+          <div class="dash-stat-mini"><div class="dash-stat-mini-val" style="color:#EF4444">14</div><div class="dash-stat-mini-lbl">Risco Alto</div></div>
+          <div class="dash-stat-mini"><div class="dash-stat-mini-val" style="color:#22C55E">97%</div><div class="dash-stat-mini-lbl">Frequência</div></div>
+          <div class="dash-stat-mini"><div class="dash-stat-mini-val" style="color:#7C3AED">32</div><div class="dash-stat-mini-lbl">Turmas</div></div>
+        </div>
+        <div class="dash-chart-row">
+          <div class="dash-chart">
+            <div class="dash-chart-title">Frequência semanal</div>
+            <div class="chart-bars">
+              <div class="chart-bar" style="height:75%"></div>
+              <div class="chart-bar" style="height:85%;opacity:1"></div>
+              <div class="chart-bar" style="height:70%"></div>
+              <div class="chart-bar" style="height:90%;opacity:1"></div>
+              <div class="chart-bar" style="height:80%"></div>
+              <div class="chart-bar" style="height:95%;background:linear-gradient(to top,#7C3AED,#A78BFA);opacity:1"></div>
+              <div class="chart-bar" style="height:88%"></div>
+            </div>
+          </div>
+          <div class="dash-list">
+            <div class="dash-chart-title">Risco alto</div>
+            <div class="dash-list-item"><div class="dash-list-avatar">MS</div>Mariana S.<div class="dash-risk-badge" style="background:#FEE2E2;color:#DC2626">87</div></div>
+            <div class="dash-list-item"><div class="dash-list-avatar">RL</div>Rafael L.<div class="dash-risk-badge" style="background:#FEE2E2;color:#DC2626">81</div></div>
+            <div class="dash-list-item"><div class="dash-list-avatar">CA</div>Carla A.<div class="dash-risk-badge" style="background:#FEF3C7;color:#D97706">76</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metric card 1 — top right (faster) -->
+    <div class="layer" id="layer-m1" style="top:30px;right:10px">
+      <div class="metric-card">
+        <div class="metric-icon" style="background:#EFF6FF">
+          <i data-lucide="users" style="width:16px;height:16px;color:#2563EB"></i>
+        </div>
+        <div><div class="metric-val">1.248</div><div class="metric-lbl">alunos ativos</div></div>
+      </div>
+    </div>
+
+    <!-- Metric card 2 — right middle -->
+    <div class="layer" id="layer-m2" style="top:180px;right:-10px">
+      <div class="metric-card">
+        <div class="metric-icon" style="background:#F0FDF4">
+          <i data-lucide="trending-up" style="width:16px;height:16px;color:#16A34A"></i>
+        </div>
+        <div><div class="metric-val" style="color:#16A34A">97%</div><div class="metric-lbl">frequência</div></div>
+      </div>
+    </div>
+
+    <!-- Metric card 3 — left (different speed) -->
+    <div class="layer" id="layer-m3" style="top:140px;left:-10px">
+      <div class="metric-card">
+        <div class="metric-icon" style="background:#FEF2F2">
+          <i data-lucide="shield-alert" style="width:16px;height:16px;color:#EF4444"></i>
+        </div>
+        <div><div class="metric-val" style="color:#EF4444">14</div><div class="metric-lbl">risco alto</div></div>
+      </div>
+    </div>
+
+    <!-- Metric card 4 — bottom left -->
+    <div class="layer" id="layer-m4" style="bottom:80px;left:0px">
+      <div class="metric-card">
+        <div class="metric-icon" style="background:#EDE9FE">
+          <i data-lucide="message-square" style="width:16px;height:16px;color:#7C3AED"></i>
+        </div>
+        <div><div class="metric-val" style="color:#7C3AED">128</div><div class="metric-lbl">comunicados</div></div>
+      </div>
+    </div>
+
+    <!-- Metric card 5 — bottom right -->
+    <div class="layer" id="layer-m5" style="bottom:60px;right:20px">
+      <div class="metric-card">
+        <div class="metric-icon" style="background:#FFFBEB">
+          <i data-lucide="alert-triangle" style="width:16px;height:16px;color:#D97706"></i>
+        </div>
+        <div><div class="metric-val" style="color:#D97706">7</div><div class="metric-lbl">intervenções</div></div>
+      </div>
+    </div>
+  </div><!-- /tilt-wrap -->
+  </div><!-- /hero-visual -->
+</section>
+
+<!-- Drift band between hero and overview -->
+<div class="drift-band" style="background:linear-gradient(to bottom,#EEF6FF,#F8FAFC)">
+  <div class="drift-track" id="drift-1">
+    <span class="drift-pill"><i data-lucide="graduation-cap" style="width:12px;height:12px;color:#2563EB"></i>1.248 alunos ativos</span>
+    <span class="drift-pill"><i data-lucide="shield-alert" style="width:12px;height:12px;color:#EF4444"></i>Motor de risco acadêmico</span>
+    <span class="drift-pill"><i data-lucide="calendar-check" style="width:12px;height:12px;color:#16A34A"></i>97% frequência média</span>
+    <span class="drift-pill"><i data-lucide="zap" style="width:12px;height:12px;color:#7C3AED"></i>Intervenção proativa</span>
+    <span class="drift-pill"><i data-lucide="bar-chart-2" style="width:12px;height:12px;color:#0284C7"></i>Relatórios em tempo real</span>
+    <span class="drift-pill"><i data-lucide="lock" style="width:12px;height:12px;color:#9333EA"></i>Multi-tenant seguro</span>
+    <span class="drift-pill"><i data-lucide="graduation-cap" style="width:12px;height:12px;color:#2563EB"></i>1.248 alunos ativos</span>
+    <span class="drift-pill"><i data-lucide="shield-alert" style="width:12px;height:12px;color:#EF4444"></i>Motor de risco acadêmico</span>
+    <span class="drift-pill"><i data-lucide="calendar-check" style="width:12px;height:12px;color:#16A34A"></i>97% frequência média</span>
+    <span class="drift-pill"><i data-lucide="zap" style="width:12px;height:12px;color:#7C3AED"></i>Intervenção proativa</span>
+  </div>
+</div>
+
+<!-- ═══ OVERVIEW ══════════════════════════════════════════════════════════ -->
+<section id="overview">
+  <div class="container">
+    <div class="overview-grid">
+      <div class="reveal-left">
+        <div class="section-badge" style="background:rgba(37,99,235,.08);color:#2563EB;border:1px solid rgba(37,99,235,.15)">
+          <i data-lucide="layers" style="width:12px;height:12px"></i>
+          Visão Completa
+        </div>
+        <h2 class="section-title">Uma visão completa<br>da escola</h2>
+        <p class="section-sub">Todas as áreas da instituição conectadas em um único painel. Gerencie sem fragmentação, decida com dados reais.</p>
+        <div style="margin-top:32px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fg2)"><span style="width:20px;height:20px;background:linear-gradient(to right,#2563EB,#7C3AED);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="check" style="width:12px;height:12px;color:white"></i></span>Multi-tenant: suporte a múltiplas escolas</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fg2)"><span style="width:20px;height:20px;background:linear-gradient(to right,#2563EB,#7C3AED);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="check" style="width:12px;height:12px;color:white"></i></span>RBAC completo com 6 perfis de acesso</div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:14px;color:var(--fg2)"><span style="width:20px;height:20px;background:linear-gradient(to right,#2563EB,#7C3AED);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><i data-lucide="check" style="width:12px;height:12px;color:white"></i></span>Auditoria total de todas as ações</div>
+        </div>
+      </div>
+      <div class="reveal-right">
+        <div class="overview-cards-stack" id="overview-stack">
+          <!-- Cards positioned with JS/CSS -->
+          <div class="overview-card" id="oc-1" style="top:0;left:60px;transform:rotate(-2deg)">
+            <div class="oc-icon" style="background:#EFF6FF"><i data-lucide="graduation-cap" style="width:18px;height:18px;color:#2563EB"></i></div>
+            <div><div class="oc-title">Alunos</div><div class="oc-desc">1.248 matriculados</div></div>
+          </div>
+          <div class="overview-card" id="oc-2" style="top:60px;left:20px;transform:rotate(1.5deg)">
+            <div class="oc-icon" style="background:#F0FDF4"><i data-lucide="users" style="width:18px;height:18px;color:#16A34A"></i></div>
+            <div><div class="oc-title">Professores</div><div class="oc-desc">84 docentes ativos</div></div>
+          </div>
+          <div class="overview-card" id="oc-3" style="top:120px;left:80px;transform:rotate(-1deg)">
+            <div class="oc-icon" style="background:#EDE9FE"><i data-lucide="book-open" style="width:18px;height:18px;color:#7C3AED"></i></div>
+            <div><div class="oc-title">Turmas</div><div class="oc-desc">32 em andamento</div></div>
+          </div>
+          <div class="overview-card" id="oc-4" style="top:180px;left:30px;transform:rotate(2deg)">
+            <div class="oc-icon" style="background:#FFFBEB"><i data-lucide="calendar-check" style="width:18px;height:18px;color:#D97706"></i></div>
+            <div><div class="oc-title">Frequência</div><div class="oc-desc">97% média geral</div></div>
+          </div>
+          <div class="overview-card" id="oc-5" style="top:240px;left:70px;transform:rotate(-1.5deg)">
+            <div class="oc-icon" style="background:#FEF2F2"><i data-lucide="clipboard-list" style="width:18px;height:18px;color:#EF4444"></i></div>
+            <div><div class="oc-title">Notas</div><div class="oc-desc">Avaliações ponderadas</div></div>
+          </div>
+          <div class="overview-card" id="oc-6" style="top:300px;left:20px;transform:rotate(1deg)">
+            <div class="oc-icon" style="background:#ECFDF5"><i data-lucide="message-square" style="width:18px;height:18px;color:#059669"></i></div>
+            <div><div class="oc-title">Comunicados</div><div class="oc-desc">Rastreio de leitura</div></div>
+          </div>
+          <div class="overview-card" id="oc-7" style="top:360px;left:60px;transform:rotate(-2.5deg)">
+            <div class="oc-icon" style="background:#FFF7ED"><i data-lucide="dollar-sign" style="width:18px;height:18px;color:#EA580C"></i></div>
+            <div><div class="oc-title">Financeiro</div><div class="oc-desc">Controle financeiro</div></div>
+          </div>
+          <div class="overview-card" id="oc-8" style="top:420px;left:30px;transform:rotate(1.5deg)">
+            <div class="oc-icon" style="background:#F0F9FF"><i data-lucide="shield-alert" style="width:18px;height:18px;color:#0284C7"></i></div>
+            <div><div class="oc-title">Motor de Risco</div><div class="oc-desc">Intervenção proativa</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ══════════════════════════════════════════════════════════ -->
+<section id="features">
+  <div class="features-bg"></div>
+  <div class="features-bg-line"></div>
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto">
+      <div class="section-badge" style="background:rgba(124,58,237,.08);color:#7C3AED;border:1px solid rgba(124,58,237,.15)">
+        <i data-lucide="grid" style="width:12px;height:12px"></i>
+        Recursos
+      </div>
+      <h2 class="section-title">Tudo que a gestão escolar precisa</h2>
+      <p class="section-sub" style="margin:0 auto">Ferramentas desenvolvidas para gestores, secretaria, professores e coordenadores.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal" style="transition-delay:.05s">
+        <div class="fc-icon" style="background:#EFF6FF"><i data-lucide="graduation-cap" style="width:22px;height:22px;color:#2563EB"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(37,99,235,.08),transparent)"></div>
+        <div class="fc-title">Gestão de Alunos</div>
+        <div class="fc-desc">Cadastro completo com histórico acadêmico, ocorrências, linha do tempo e vínculo com responsáveis.</div>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:.1s">
+        <div class="fc-icon" style="background:#F0FDF4"><i data-lucide="users" style="width:22px;height:22px;color:#16A34A"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(22,163,74,.06),transparent)"></div>
+        <div class="fc-title">Gestão de Professores</div>
+        <div class="fc-desc">Perfis com especialidades, atribuição de turmas e visualização de carga horária.</div>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:.15s">
+        <div class="fc-icon" style="background:#EDE9FE"><i data-lucide="book-open" style="width:22px;height:22px;color:#7C3AED"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(124,58,237,.06),transparent)"></div>
+        <div class="fc-title">Controle de Turmas</div>
+        <div class="fc-desc">Crie e gerencie turmas por ano letivo, atribua disciplinas e professores com facilidade.</div>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:.2s">
+        <div class="fc-icon" style="background:#FFFBEB"><i data-lucide="calendar-check" style="width:22px;height:22px;color:#D97706"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(217,119,6,.06),transparent)"></div>
+        <div class="fc-title">Frequência Escolar</div>
+        <div class="fc-desc">Presente, Ausente, Atrasado, Justificado. Taxa calculada automaticamente por aluno.</div>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:.25s">
+        <div class="fc-icon" style="background:#FEF2F2"><i data-lucide="shield-alert" style="width:22px;height:22px;color:#DC2626"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(220,38,38,.06),transparent)"></div>
+        <div class="fc-title">Motor de Risco Acadêmico</div>
+        <div class="fc-desc">Algoritmo preditivo identifica alunos em risco ALTO/MÉDIO/BAIXO e sugere intervenções antes que os problemas escale.</div>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:.3s">
+        <div class="fc-icon" style="background:#ECFDF5"><i data-lucide="message-square" style="width:22px;height:22px;color:#059669"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(5,150,105,.06),transparent)"></div>
+        <div class="fc-title">Comunicados Inteligentes</div>
+        <div class="fc-desc">Envios segmentados por turma, perfil ou aluno. Rastreamento de leitura para confirmar alcance.</div>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:.35s">
+        <div class="fc-icon" style="background:#F0F9FF"><i data-lucide="bar-chart-2" style="width:22px;height:22px;color:#0284C7"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(2,132,199,.06),transparent)"></div>
+        <div class="fc-title">Relatórios Inteligentes</div>
+        <div class="fc-desc">Visualizações de desempenho, frequência e risco. Dados prontos para tomada de decisão.</div>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:.4s">
+        <div class="fc-icon" style="background:#FFF7ED"><i data-lucide="alert-triangle" style="width:22px;height:22px;color:#EA580C"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(234,88,12,.06),transparent)"></div>
+        <div class="fc-title">Planos de Intervenção</div>
+        <div class="fc-desc">Fluxo completo: Aberto → Em andamento → Aguardando → Resolvido. Rastreável por toda a equipe.</div>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:.45s">
+        <div class="fc-icon" style="background:#FAF5FF"><i data-lucide="lock" style="width:22px;height:22px;color:#9333EA"></i></div>
+        <div class="fc-glow" style="background:radial-gradient(circle,rgba(147,51,234,.06),transparent)"></div>
+        <div class="fc-title">Permissões por Perfil</div>
+        <div class="fc-desc">RBAC granular com 6 perfis: Super Admin, Diretor, Coordenador, Professor, Responsável e Aluno.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DASHBOARD DARK ═══════════════════════════════════════════════════ -->
+<section id="dashboard-section">
+  <div class="ds-grid-pattern"></div>
+  <div class="ds-glow-1"></div>
+  <div class="ds-glow-2"></div>
+  <div class="container">
+    <div class="reveal" style="max-width:560px">
+      <div class="section-badge">
+        <i data-lucide="activity" style="width:12px;height:12px"></i>
+        Inteligência de Dados
+      </div>
+      <h2 class="section-title">Painéis que transformam dados em decisões</h2>
+      <p class="section-sub">Visualize o que importa: risco acadêmico, frequência, desempenho e alertas pedagógicos em tempo real.</p>
+    </div>
+    <div class="ds-grid">
+      <div class="reveal" style="display:flex;flex-direction:column;gap:16px">
+        <div class="ds-panel">
+          <div class="ds-panel-title">KPIs em Tempo Real</div>
+          <div class="ds-kpi-row">
+            <div class="ds-kpi">
+              <div class="ds-kpi-val" style="color:#60A5FA"><span class="counter" data-target="1248" data-prefix="">1.248</span></div>
+              <div class="ds-kpi-lbl">Alunos ativos</div>
+            </div>
+            <div class="ds-kpi">
+              <div class="ds-kpi-val" style="color:#F87171"><span class="counter" data-target="14" data-prefix="">14</span></div>
+              <div class="ds-kpi-lbl">Risco alto</div>
+            </div>
+            <div class="ds-kpi">
+              <div class="ds-kpi-val" style="color:#34D399">97%</div>
+              <div class="ds-kpi-lbl">Frequência</div>
+            </div>
+            <div class="ds-kpi">
+              <div class="ds-kpi-val" style="color:#A78BFA"><span class="counter" data-target="7" data-prefix="">7</span></div>
+              <div class="ds-kpi-lbl">Intervenções</div>
+            </div>
+          </div>
+        </div>
+        <div class="ds-panel">
+          <div class="ds-panel-title">Frequência — Últimas 7 semanas</div>
+          <div class="ds-chart-area">
+            <div class="ds-bar-chart" id="ds-bar-chart">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div class="ds-bar" style="width:100%;background:linear-gradient(to top,rgba(37,99,235,.6),rgba(96,165,250,.8));border-radius:4px 4px 0 0" data-h="72"></div><div class="ds-bar-label">S1</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div class="ds-bar" style="width:100%;background:linear-gradient(to top,rgba(37,99,235,.6),rgba(96,165,250,.8));border-radius:4px 4px 0 0" data-h="85"></div><div class="ds-bar-label">S2</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div class="ds-bar" style="width:100%;background:linear-gradient(to top,rgba(37,99,235,.6),rgba(96,165,250,.8));border-radius:4px 4px 0 0" data-h="78"></div><div class="ds-bar-label">S3</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div class="ds-bar" style="width:100%;background:linear-gradient(to top,rgba(37,99,235,.6),rgba(96,165,250,.8));border-radius:4px 4px 0 0" data-h="91"></div><div class="ds-bar-label">S4</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div class="ds-bar" style="width:100%;background:linear-gradient(to top,rgba(37,99,235,.6),rgba(96,165,250,.8));border-radius:4px 4px 0 0" data-h="88"></div><div class="ds-bar-label">S5</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div class="ds-bar" style="width:100%;background:linear-gradient(to top,rgba(37,99,235,.6),rgba(96,165,250,.8));border-radius:4px 4px 0 0" data-h="95"></div><div class="ds-bar-label">S6</div></div>
+              <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><div class="ds-bar" style="width:100%;background:linear-gradient(to top,rgba(124,58,237,.7),rgba(167,139,250,.9));border-radius:4px 4px 0 0" data-h="97"></div><div class="ds-bar-label">S7</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="display:flex;flex-direction:column;gap:16px;transition-delay:.1s">
+        <div class="ds-panel">
+          <div class="ds-panel-title">Alunos em Risco — Top 5</div>
+          <div class="ds-risk-list">
+            <div class="ds-risk-item"><div class="ds-risk-name">Mariana Silva</div><div class="ds-risk-bar"><div class="ds-risk-fill" style="width:87%;background:linear-gradient(to right,#F87171,#EF4444)"></div></div><div class="ds-risk-score" style="color:#F87171">87</div></div>
+            <div class="ds-risk-item"><div class="ds-risk-name">Rafael Lima</div><div class="ds-risk-bar"><div class="ds-risk-fill" style="width:81%;background:linear-gradient(to right,#F87171,#EF4444)"></div></div><div class="ds-risk-score" style="color:#F87171">81</div></div>
+            <div class="ds-risk-item"><div class="ds-risk-name">Carla Almeida</div><div class="ds-risk-bar"><div class="ds-risk-fill" style="width:76%;background:linear-gradient(to right,#FBBF24,#F59E0B)"></div></div><div class="ds-risk-score" style="color:#FBBF24">76</div></div>
+            <div class="ds-risk-item"><div class="ds-risk-name">João Pedro R.</div><div class="ds-risk-bar"><div class="ds-risk-fill" style="width:72%;background:linear-gradient(to right,#FBBF24,#F59E0B)"></div></div><div class="ds-risk-score" style="color:#FBBF24">72</div></div>
+            <div class="ds-risk-item"><div class="ds-risk-name">Thiago Santos</div><div class="ds-risk-bar"><div class="ds-risk-fill" style="width:70%;background:linear-gradient(to right,#FBBF24,#F59E0B)"></div></div><div class="ds-risk-score" style="color:#FBBF24">70</div></div>
+          </div>
+        </div>
+        <div class="ds-panel">
+          <div class="ds-panel-title">Alertas Pedagógicos</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
+              <i data-lucide="alert-circle" style="width:14px;height:14px;color:#F87171;flex-shrink:0"></i>
+              <span style="font-size:12px;color:rgba(255,255,255,.75)">3 alunos abaixo de 50% de frequência</span>
+            </div>
+            <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.18);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
+              <i data-lucide="clock" style="width:14px;height:14px;color:#FBBF24;flex-shrink:0"></i>
+              <span style="font-size:12px;color:rgba(255,255,255,.75)">7 intervenções aguardando resposta</span>
+            </div>
+            <div style="background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.15);border-radius:10px;padding:10px 12px;display:flex;align-items:center;gap:8px">
+              <i data-lucide="check-circle" style="width:14px;height:14px;color:#60A5FA;flex-shrink:0"></i>
+              <span style="font-size:12px;color:rgba(255,255,255,.75)">Prova de Matemática — 9A em 3 dias</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ DIFERENCIAIS ══════════════════════════════════════════════════════ -->
+<section id="diferenciais">
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:580px;margin:0 auto">
+      <div class="section-badge" style="background:rgba(22,163,74,.08);color:#16A34A;border:1px solid rgba(22,163,74,.15)">
+        <i data-lucide="star" style="width:12px;height:12px"></i>
+        Por que EduPulse
+      </div>
+      <h2 class="section-title">Além do sistema escolar comum</h2>
+    </div>
+    <div class="dif-list" id="dif-list">
+      <div class="dif-item reveal">
+        <div class="dif-body">
+          <div class="dif-icon"><i data-lucide="monitor" style="width:22px;height:22px;color:#64748B"></i></div>
+          <div class="dif-text-wrap">
+            <div class="dif-title">Interface moderna e intuitiva</div>
+            <div class="dif-desc">Design pensado para reduzir cliques e aumentar produtividade. Sem curva de aprendizado.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dif-item reveal" style="transition-delay:.06s">
+        <div class="dif-body">
+          <div class="dif-icon"><i data-lucide="eye" style="width:22px;height:22px;color:#64748B"></i></div>
+          <div class="dif-text-wrap">
+            <div class="dif-title">Visão centralizada de toda a escola</div>
+            <div class="dif-desc">Chame de controle total: alunos, professores, turmas, finanças e comunicação em um lugar.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dif-item reveal" style="transition-delay:.12s">
+        <div class="dif-body">
+          <div class="dif-icon"><i data-lucide="brain" style="width:22px;height:22px;color:#64748B"></i></div>
+          <div class="dif-text-wrap">
+            <div class="dif-title">Dados organizados para decisões melhores</div>
+            <div class="dif-desc">Dashboards analíticos com indicadores-chave que mostram o que precisa de atenção agora.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dif-item reveal" style="transition-delay:.18s">
+        <div class="dif-body">
+          <div class="dif-icon"><i data-lucide="shield-check" style="width:22px;height:22px;color:#64748B"></i></div>
+          <div class="dif-text-wrap">
+            <div class="dif-title">Motor de risco acadêmico preditivo</div>
+            <div class="dif-desc">Identifica alunos em risco antes que os problemas se tornem críticos. Diferencial real no mercado.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dif-item reveal" style="transition-delay:.24s">
+        <div class="dif-body">
+          <div class="dif-icon"><i data-lucide="message-circle" style="width:22px;height:22px;color:#64748B"></i></div>
+          <div class="dif-text-wrap">
+            <div class="dif-title">Comunicação mais clara com responsáveis</div>
+            <div class="dif-desc">Comunicados segmentados com confirmação de leitura. Responsáveis sempre informados.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dif-item reveal" style="transition-delay:.3s">
+        <div class="dif-body">
+          <div class="dif-icon"><i data-lucide="smartphone" style="width:22px;height:22px;color:#64748B"></i></div>
+          <div class="dif-text-wrap">
+            <div class="dif-title">Responsivo para desktop, tablet e mobile</div>
+            <div class="dif-desc">Acesse de qualquer dispositivo. Professores no tablet, gestores no desktop.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dif-item reveal" style="transition-delay:.36s">
+        <div class="dif-body">
+          <div class="dif-icon"><i data-lucide="zap" style="width:22px;height:22px;color:#64748B"></i></div>
+          <div class="dif-text-wrap">
+            <div class="dif-title">Arquitetura pronta para evoluir</div>
+            <div class="dif-desc">Multi-tenant SaaS com separação de dados por escola. Escale sem atrito.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FLOW ═══════════════════════════════════════════════════════════════ -->
+<section id="flow">
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:560px;margin:0 auto">
+      <div class="section-badge" style="background:rgba(37,99,235,.08);color:#2563EB;border:1px solid rgba(37,99,235,.15)">
+        <i data-lucide="git-branch" style="width:12px;height:12px"></i>
+        Fluxo de Trabalho
+      </div>
+      <h2 class="section-title">Fluxo da rotina escolar</h2>
+      <p class="section-sub" style="margin:0 auto">Do cadastro do aluno à tomada de decisão da gestão — cada etapa conectada.</p>
+    </div>
+    <div class="flow-steps" id="flow-steps">
+      <div class="flow-line-track"></div>
+      <div class="flow-line-fill" id="flow-line"></div>
+      <div class="flow-step" data-step="0">
+        <div class="flow-dot"><i data-lucide="user-plus" style="width:22px;height:22px;color:#94A3B8" class="flow-dot-icon"></i></div>
+        <div class="flow-card"><div class="flow-step-num">Passo 01</div><div class="flow-step-title">Cadastro do Aluno</div><div class="flow-step-desc">Perfil completo com dados pessoais, contatos, responsáveis e histórico de registros.</div></div>
+      </div>
+      <div class="flow-step" data-step="1">
+        <div class="flow-dot"><i data-lucide="book-open" style="width:22px;height:22px;color:#94A3B8" class="flow-dot-icon"></i></div>
+        <div class="flow-card"><div class="flow-step-num">Passo 02</div><div class="flow-step-title">Organização em Turma</div><div class="flow-step-desc">Matrícula em turmas, atribuição de disciplinas e professores para o período letivo.</div></div>
+      </div>
+      <div class="flow-step" data-step="2">
+        <div class="flow-dot"><i data-lucide="calendar-check" style="width:22px;height:22px;color:#94A3B8" class="flow-dot-icon"></i></div>
+        <div class="flow-card"><div class="flow-step-num">Passo 03</div><div class="flow-step-title">Lançamento de Frequência</div><div class="flow-step-desc">Registro sessão a sessão: Presente, Ausente, Atrasado, Justificado. Taxa calculada automaticamente.</div></div>
+      </div>
+      <div class="flow-step" data-step="3">
+        <div class="flow-dot"><i data-lucide="clipboard-list" style="width:22px;height:22px;color:#94A3B8" class="flow-dot-icon"></i></div>
+        <div class="flow-card"><div class="flow-step-num">Passo 04</div><div class="flow-step-title">Registro de Desempenho</div><div class="flow-step-desc">Avaliações com peso e pontuação. Notas com feedback individual por professor.</div></div>
+      </div>
+      <div class="flow-step" data-step="4">
+        <div class="flow-dot"><i data-lucide="message-square" style="width:22px;height:22px;color:#94A3B8" class="flow-dot-icon"></i></div>
+        <div class="flow-card"><div class="flow-step-num">Passo 05</div><div class="flow-step-title">Comunicação com Responsáveis</div><div class="flow-step-desc">Comunicados segmentados com confirmação de leitura. Responsáveis sempre no loop.</div></div>
+      </div>
+      <div class="flow-step" data-step="5">
+        <div class="flow-dot"><i data-lucide="bar-chart-2" style="width:22px;height:22px;color:#94A3B8" class="flow-dot-icon"></i></div>
+        <div class="flow-card"><div class="flow-step-num">Passo 06</div><div class="flow-step-title">Relatórios para Gestão</div><div class="flow-step-desc">Dashboards analíticos com risco acadêmico, frequência e desempenho para decisões precisas.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROFILES ══════════════════════════════════════════════════════════ -->
+<section id="profiles">
+  <div class="container">
+    <div class="reveal" style="text-align:center;max-width:580px;margin:0 auto">
+      <div class="section-badge" style="background:rgba(124,58,237,.08);color:#7C3AED;border:1px solid rgba(124,58,237,.15)">
+        <i data-lucide="users" style="width:12px;height:12px"></i>
+        Perfis de Acesso
+      </div>
+      <h2 class="section-title">Para cada perfil, uma experiência</h2>
+    </div>
+    <div class="profiles-tabs reveal">
+      <div class="prof-tab active" data-profile="admin">Administrador</div>
+      <div class="prof-tab" data-profile="coord">Coordenador</div>
+      <div class="prof-tab" data-profile="teacher">Professor</div>
+      <div class="prof-tab" data-profile="guardian">Responsável</div>
+      <div class="prof-tab" data-profile="student">Aluno</div>
+    </div>
+    <div class="profiles-content reveal" style="transition-delay:.1s">
+      <div class="prof-panel active" id="prof-admin">
+        <div class="prof-info">
+          <div class="prof-avatar-wrap" style="background:linear-gradient(135deg,#EDE9FE,#DDD6FE)">🎓</div>
+          <div class="prof-role-badge" style="background:#EDE9FE;color:#7C3AED">SCHOOL_ADMIN</div>
+          <div class="prof-title">Administrador</div>
+          <div class="prof-desc">Visão total da instituição. Acesso irrestrito a todos os módulos, configurações, usuários e dados.</div>
+          <div class="prof-perms">
+            <div class="prof-perm"><div class="perm-dot" style="background:#7C3AED"></div>Gerencia todas as escolas (multi-tenant)</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#7C3AED"></div>Configura períodos letivos e turmas</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#7C3AED"></div>Acesso ao motor de risco e intervenções</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#7C3AED"></div>Auditoria completa de todas as ações</div>
+          </div>
+        </div>
+        <div class="prof-visual">
+          <div class="prof-screen-mock">
+            <div class="prof-screen-header">
+              <div class="prof-screen-dot" style="background:#EF4444"></div>
+              <div class="prof-screen-dot" style="background:#F59E0B"></div>
+              <div class="prof-screen-dot" style="background:#22C55E"></div>
+            </div>
+            <div class="prof-screen-rows">
+              <div class="prof-screen-row-highlight" style="background:linear-gradient(to right,rgba(124,58,237,.15),rgba(37,99,235,.1));border-radius:6px;height:28px"></div>
+              <div class="prof-screen-row"></div>
+              <div class="prof-screen-row"></div>
+              <div class="prof-screen-row" style="width:70%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="prof-panel" id="prof-coord">
+        <div class="prof-info">
+          <div class="prof-avatar-wrap" style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE)">📋</div>
+          <div class="prof-role-badge" style="background:#DBEAFE;color:#1D4ED8">COORDINATOR</div>
+          <div class="prof-title">Coordenador</div>
+          <div class="prof-desc">Supervisiona turmas, acompanha alunos em risco e coordena intervenções pedagógicas.</div>
+          <div class="prof-perms">
+            <div class="prof-perm"><div class="perm-dot" style="background:#2563EB"></div>Acesso ao motor de risco acadêmico</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#2563EB"></div>Cria e acompanha planos de intervenção</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#2563EB"></div>Envia comunicados para responsáveis</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#2563EB"></div>Visualiza todos os relatórios</div>
+          </div>
+        </div>
+        <div class="prof-visual">
+          <div class="prof-screen-mock">
+            <div class="prof-screen-header">
+              <div class="prof-screen-dot" style="background:#EF4444"></div>
+              <div class="prof-screen-dot" style="background:#F59E0B"></div>
+              <div class="prof-screen-dot" style="background:#22C55E"></div>
+            </div>
+            <div class="prof-screen-rows">
+              <div class="prof-screen-row-highlight" style="background:linear-gradient(to right,rgba(37,99,235,.15),rgba(96,165,250,.1));border-radius:6px;height:28px"></div>
+              <div class="prof-screen-row"></div>
+              <div class="prof-screen-row"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="prof-panel" id="prof-teacher">
+        <div class="prof-info">
+          <div class="prof-avatar-wrap" style="background:linear-gradient(135deg,#DCFCE7,#BBF7D0)">📖</div>
+          <div class="prof-role-badge" style="background:#DCFCE7;color:#15803D">TEACHER</div>
+          <div class="prof-title">Professor</div>
+          <div class="prof-desc">Lança frequência, registra notas e acompanha o progresso dos alunos nas suas turmas.</div>
+          <div class="prof-perms">
+            <div class="prof-perm"><div class="perm-dot" style="background:#16A34A"></div>Registra frequência de suas turmas</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#16A34A"></div>Lança notas com feedback individual</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#16A34A"></div>Registra ocorrências disciplinares</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#16A34A"></div>Visualiza alunos em risco na turma</div>
+          </div>
+        </div>
+        <div class="prof-visual">
+          <div class="prof-screen-mock">
+            <div class="prof-screen-header">
+              <div class="prof-screen-dot" style="background:#EF4444"></div>
+              <div class="prof-screen-dot" style="background:#F59E0B"></div>
+              <div class="prof-screen-dot" style="background:#22C55E"></div>
+            </div>
+            <div class="prof-screen-rows">
+              <div class="prof-screen-row-highlight" style="background:linear-gradient(to right,rgba(22,163,74,.15),rgba(74,222,128,.1));border-radius:6px;height:28px"></div>
+              <div class="prof-screen-row"></div>
+              <div class="prof-screen-row"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="prof-panel" id="prof-guardian">
+        <div class="prof-info">
+          <div class="prof-avatar-wrap" style="background:linear-gradient(135deg,#FEF3C7,#FDE68A)">👨‍👩‍👧</div>
+          <div class="prof-role-badge" style="background:#FEF3C7;color:#B45309">GUARDIAN</div>
+          <div class="prof-title">Responsável</div>
+          <div class="prof-desc">Acompanha o desenvolvimento do filho: frequência, notas e comunicados da escola.</div>
+          <div class="prof-perms">
+            <div class="prof-perm"><div class="perm-dot" style="background:#D97706"></div>Visualiza frequência e notas do filho</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#D97706"></div>Recebe comunicados da escola</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#D97706"></div>Acompanha planos de intervenção</div>
+          </div>
+        </div>
+        <div class="prof-visual">
+          <div class="prof-screen-mock">
+            <div class="prof-screen-header">
+              <div class="prof-screen-dot" style="background:#EF4444"></div>
+              <div class="prof-screen-dot" style="background:#F59E0B"></div>
+              <div class="prof-screen-dot" style="background:#22C55E"></div>
+            </div>
+            <div class="prof-screen-rows">
+              <div class="prof-screen-row-highlight" style="background:linear-gradient(to right,rgba(217,119,6,.15),rgba(251,191,36,.1));border-radius:6px;height:28px"></div>
+              <div class="prof-screen-row"></div>
+              <div class="prof-screen-row"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="prof-panel" id="prof-student">
+        <div class="prof-info">
+          <div class="prof-avatar-wrap" style="background:linear-gradient(135deg,#F1F5F9,#E2E8F0)">🧑‍🎓</div>
+          <div class="prof-role-badge" style="background:#F1F5F9;color:#334155">STUDENT</div>
+          <div class="prof-title">Aluno</div>
+          <div class="prof-desc">Visualiza seu próprio histórico acadêmico, frequência, notas e comunicados da escola.</div>
+          <div class="prof-perms">
+            <div class="prof-perm"><div class="perm-dot" style="background:#64748B"></div>Visualiza próprias notas e avaliações</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#64748B"></div>Consulta histórico de frequência</div>
+            <div class="prof-perm"><div class="perm-dot" style="background:#64748B"></div>Recebe comunicados direcionados</div>
+          </div>
+        </div>
+        <div class="prof-visual">
+          <div class="prof-screen-mock">
+            <div class="prof-screen-header">
+              <div class="prof-screen-dot" style="background:#EF4444"></div>
+              <div class="prof-screen-dot" style="background:#F59E0B"></div>
+              <div class="prof-screen-dot" style="background:#22C55E"></div>
+            </div>
+            <div class="prof-screen-rows">
+              <div class="prof-screen-row-highlight" style="background:linear-gradient(to right,rgba(100,116,139,.1),rgba(148,163,184,.08));border-radius:6px;height:28px"></div>
+              <div class="prof-screen-row"></div>
+              <div class="prof-screen-row"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ════════════════════════════════════════════════════════════════ -->
+<section id="cta">
+  <div class="cta-glow-1"></div>
+  <div class="cta-glow-2"></div>
+  <!-- Floating cards -->
+  <div class="cta-float-card cta-float-1">
+    <div class="cf-label">Alunos Ativos</div>
+    <div class="cf-val">1.248</div>
+    <div class="cf-sub">+12% este mês</div>
+  </div>
+  <div class="cta-float-card cta-float-2">
+    <div class="cf-label">Frequência Média</div>
+    <div class="cf-val">97%</div>
+    <div class="cf-sub">32 turmas</div>
+  </div>
+  <div class="cta-float-card cta-float-3">
+    <div class="cf-label">Intervenções</div>
+    <div class="cf-val">100%</div>
+    <div class="cf-sub">rastreadas</div>
+  </div>
+
+  <div class="container" style="position:relative;z-index:1">
+    <div class="reveal">
+      <h2 class="cta-title">Leve sua escola para uma<br>gestão mais inteligente.</h2>
+      <p class="cta-sub">Uma plataforma moderna para organizar processos, reduzir retrabalho e transformar dados escolares em decisões melhores.</p>
+      <div class="cta-btns">
+        <a href="/login" target="_top" class="btn-cta-primary">Acessar plataforma</a>
+        <a href="#dashboard-section" class="btn-cta-outline">Solicitar demonstração</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-logo">
+          <div class="footer-brand-icon">
+            <i data-lucide="zap" style="width:14px;height:14px;color:white;stroke-width:2.5"></i>
+          </div>
+          <div class="footer-brand-name">Edu<em>Pulse</em></div>
+        </div>
+        <p class="footer-desc">Plataforma SaaS inteligente para gestão escolar moderna. Multi-tenant, segura e pronta para escalar.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Plataforma</div>
+        <div class="footer-links">
+          <a href="#">Dashboard</a>
+          <a href="#">Alunos</a>
+          <a href="#">Turmas</a>
+          <a href="#">Frequência</a>
+          <a href="#">Notas</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Recursos</div>
+        <div class="footer-links">
+          <a href="#">Motor de Risco</a>
+          <a href="#">Comunicados</a>
+          <a href="#">Intervenções</a>
+          <a href="#">Relatórios</a>
+          <a href="#">API Docs</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Empresa</div>
+        <div class="footer-links">
+          <a href="#">Sobre</a>
+          <a href="#">Privacidade</a>
+          <a href="#">Termos</a>
+          <a href="#">Suporte</a>
+          <a href="#">GitHub</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>EduPulse © 2026. Todos os direitos reservados.</span>
+      <div style="display:flex;gap:20px">
+        <a href="#">Privacidade</a>
+        <a href="#">Termos</a>
+        <a href="#">Suporte</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+lucide.createIcons();
+
+/* ─── Navbar scroll ─────────────────────────────────────────────────────── */
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 20);
+},{passive:true});
+
+/* ─── Particle canvas — depth-aware ────────────────────────────────────── */
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+for(let i = 0; i < 70; i++){
+  const depth = Math.random(); // 0=far, 1=close
+  particles.push({
+    x: Math.random() * window.innerWidth,
+    y: Math.random() * window.innerHeight,
+    r: depth * 2.2 + 0.4,
+    vx: (Math.random() - .5) * (0.1 + depth * 0.3),
+    vy: (Math.random() - .5) * (0.08 + depth * 0.18),
+    alpha: depth * 0.35 + 0.08,
+    depth,
+    color: ['#60A5FA','#A78BFA','#34D399','#06B6D4','#FBBF24'][Math.floor(Math.random()*5)],
+    parallaxFactor: depth * 0.5 + 0.1,
+  });
+}
+
+let scrollY = 0;
+function drawParticles(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    // Deeper particles drift more with scroll
+    const py = p.y + scrollY * p.parallaxFactor * 0.15;
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < 0) p.x = canvas.width;
+    if(p.x > canvas.width) p.x = 0;
+    if(p.y < 0) p.y = canvas.height;
+    if(p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, py % canvas.height, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color;
+    ctx.globalAlpha = p.alpha;
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ─── Drift band ─────────────────────────────────────────────────────────── */
+const driftTrack = document.getElementById('drift-1');
+let driftX = 0;
+function animateDrift(){
+  driftX -= 0.5;
+  const w = driftTrack.scrollWidth / 2;
+  if(Math.abs(driftX) >= w) driftX = 0;
+  driftTrack.style.transform = `translateY(-50%) translateX(${driftX}px)`;
+  requestAnimationFrame(animateDrift);
+}
+animateDrift();
+
+/* ─── Hero parallax engine — multi-layer ─────────────────────────────────── */
+const layerDash    = document.getElementById('layer-dash');
+const layerBgDash  = document.getElementById('layer-bg-dash');
+const layerM1      = document.getElementById('layer-m1');
+const layerM2      = document.getElementById('layer-m2');
+const layerM3      = document.getElementById('layer-m3');
+const layerM4      = document.getElementById('layer-m4');
+const layerM5      = document.getElementById('layer-m5');
+const tiltWrap     = document.getElementById('tilt-wrap');
+const heroGlow     = document.getElementById('hero-glow');
+const heroGlow2    = document.getElementById('hero-glow-2');
+const heroGrid     = document.getElementById('hero-grid');
+const heroTitle    = document.getElementById('hero-title');
+const heroSub      = document.getElementById('hero-sub');
+const heroStats    = document.getElementById('hero-stats');
+const heroBadge    = document.getElementById('hero-badge');
+const heroBtns     = document.getElementById('hero-btns');
+const connSvg      = document.getElementById('conn-svg');
+const heroEl       = document.getElementById('hero');
+const scrollInd    = document.getElementById('scroll-ind');
+const ring1        = document.getElementById('ring-1');
+const ring2        = document.getElementById('ring-2');
+const ring3        = document.getElementById('ring-3');
+const blob_a       = document.getElementById('blob-a');
+const blob_b       = document.getElementById('blob-b');
+const blob_c       = document.getElementById('blob-c');
+const stripe1      = document.getElementById('stripe-1');
+const stripe2      = document.getElementById('stripe-2');
+const stripe3      = document.getElementById('stripe-3');
+const dc1          = document.getElementById('dc-1');
+const dc2          = document.getElementById('dc-2');
+const dc3          = document.getElementById('dc-3');
+
+// Mouse-driven tilt state
+let mouseX = 0, mouseY = 0;
+let tiltX = 0, tiltY = 0;
+let targetTiltX = 0, targetTiltY = 0;
+
+heroEl.addEventListener('mousemove', e => {
+  const rect = heroEl.getBoundingClientRect();
+  const cx = rect.width / 2, cy = rect.height / 2;
+  mouseX = e.clientX - rect.left;
+  mouseY = e.clientY - rect.top;
+  // Map to -1..1
+  targetTiltY = ((mouseX - cx) / cx) * 12;  // Y-axis tilt (horizontal mouse)
+  targetTiltX = -((mouseY - cy) / cy) * 8;  // X-axis tilt (vertical mouse)
+  // Glow follows cursor
+  heroGlow.style.left = (mouseX - 350) + 'px';
+  heroGlow.style.top  = (mouseY - 350) + 'px';
+},{passive:true});
+
+heroEl.addEventListener('mouseleave', () => {
+  targetTiltX = 0;
+  targetTiltY = 0;
+});
+
+// Smooth tilt interpolation + scroll parallax combined
+function parallaxLoop(){
+  scrollY = window.scrollY;
+  const heroH = heroEl.offsetHeight;
+  if(scrollY <= heroH * 1.4){
+    const pct = scrollY / heroH;
+    const ease = 1 - pct;
+
+    // Smooth tilt lerp
+    tiltX += (targetTiltX - tiltX) * 0.07;
+    tiltY += (targetTiltY - tiltY) * 0.07;
+
+    const scrollTiltX = pct * -8;  // tilt forward as you scroll
+    const totalTiltX = tiltX + scrollTiltX;
+
+    // Background grid moves slowest
+    heroGrid.style.transform = `translateY(${scrollY * 0.08}px) translateX(${scrollY * 0.02}px)`;
+
+    // Depth blobs move at different speeds
+    blob_a.style.transform = `translateY(${scrollY * 0.35}px) translateX(${scrollY * 0.04}px)`;
+    blob_b.style.transform = `translateY(${scrollY * 0.5}px) translateX(${-scrollY * 0.03}px)`;
+    blob_c.style.transform = `translateY(${scrollY * 0.25}px)`;
+
+    // Stripes move at different speeds (horizontal effect)
+    stripe1.style.transform = `translateX(${-scrollY * 0.12}px) translateY(${scrollY * 0.18}px)`;
+    stripe2.style.transform = `translateX(${scrollY * 0.08}px) translateY(${scrollY * 0.22}px)`;
+    stripe3.style.transform = `translateX(${-scrollY * 0.05}px) translateY(${scrollY * 0.26}px)`;
+
+    // Depth circles orbit-like
+    dc1.style.transform = `translate(${Math.sin(scrollY*0.005)*20}px, ${scrollY*0.3}px)`;
+    dc2.style.transform = `translate(${Math.cos(scrollY*0.004)*15}px, ${scrollY*0.42}px)`;
+    dc3.style.transform = `translate(${Math.sin(scrollY*0.003)*12}px, ${scrollY*0.24}px)`;
+
+    // Rings scale and rotate with scroll
+    ring1.style.transform = `rotate(${scrollY * 0.05}deg) scale(${1 + pct * 0.15})`;
+    ring2.style.transform = `rotate(${-scrollY * 0.03}deg) scale(${1 + pct * 0.1})`;
+    ring3.style.transform = `translateY(${scrollY * 0.38}px) rotate(${scrollY * 0.08}deg)`;
+
+    // Main tilt wrapper — 3D perspective tilt (mouse + scroll combined)
+    tiltWrap.style.transform = `rotateX(${totalTiltX}deg) rotateY(${tiltY}deg)`;
+
+    // Background blurred dashboard — deeper layer, moves more
+    if(layerBgDash) {
+      layerBgDash.style.transform = `translateY(${scrollY * 0.1}px) translateX(${tiltY * 2}px) scale(.96)`;
+      layerBgDash.style.opacity = Math.max(0, 0.18 - pct * 0.3);
+    }
+
+    // Main dashboard — moves slow, with slight horizontal tilt response
+    layerDash.style.transform = `translateY(${scrollY * 0.2}px) translateX(${tiltY * 3}px) translateZ(0)`;
+    layerDash.style.opacity = Math.max(0, 1 - pct * 2.4);
+
+    // Cards at 5 different depths / speeds — also respond to mouse tilt
+    layerM1.style.transform = `translateY(${scrollY * 0.38 - tiltX * 2}px) translateX(${scrollY * 0.04 + tiltY * 5}px)`;
+    layerM2.style.transform = `translateY(${scrollY * 0.28 - tiltX * 1.5}px) translateX(${scrollY * 0.02 + tiltY * 3}px)`;
+    layerM3.style.transform = `translateY(${scrollY * 0.46 - tiltX * 2.5}px) translateX(${-scrollY * 0.03 - tiltY * 4}px)`;
+    layerM4.style.transform = `translateY(${scrollY * 0.32 - tiltX}px) translateX(${tiltY * 2}px)`;
+    layerM5.style.transform = `translateY(${scrollY * 0.43 - tiltX * 2}px) translateX(${scrollY * 0.02 + tiltY * 4}px)`;
+
+    [layerM1,layerM2,layerM3,layerM4,layerM5].forEach(m => {
+      m.style.opacity = Math.max(0, 1 - pct * 2.8);
+    });
+
+    // Connection lines — rotate + scale
+    connSvg.style.transform = `rotate(${scrollY * 0.025 + tiltY * 0.3}deg) scale(${1 + pct * 0.06})`;
+    connSvg.style.opacity = Math.max(0, 1 - pct * 2.5);
+
+    // Glows breathe with scroll
+    heroGlow.style.transform = `scale(${1 + pct * 0.4}) translateY(${scrollY * 0.08}px)`;
+    heroGlow2.style.transform = `scale(${1 + pct * 0.3}) translateY(${-scrollY * 0.06}px)`;
+
+    // Text layers — different parallax speeds (text moves up slower)
+    heroBadge.style.transform = `translateY(${scrollY * 0.14}px)`;
+    heroBadge.style.opacity = Math.max(0, 1 - pct * 3);
+    heroTitle.style.transform = `translateY(${scrollY * 0.12}px)`;
+    heroSub.style.transform   = `translateY(${scrollY * 0.10}px)`;
+    heroBtns.style.transform  = `translateY(${scrollY * 0.09}px)`;
+    heroStats.style.transform = `translateY(${scrollY * 0.08}px)`;
+
+    // Overall hero fades out
+    heroEl.style.opacity = Math.max(0.15, 1 - pct * 1.3);
+
+    // Scroll indicator fades away early
+    if(scrollInd) scrollInd.style.opacity = Math.max(0, 1 - pct * 5);
+  }
+
+  requestAnimationFrame(parallaxLoop);
+}
+requestAnimationFrame(parallaxLoop);
+
+/* ─── Overview cards parallax ───────────────────────────────────────────── */
+const overviewCards = document.querySelectorAll('.overview-card');
+function parallaxOverview(){
+  const section = document.getElementById('overview');
+  const rect = section.getBoundingClientRect();
+  const progress = (-rect.top) / (rect.height * 0.6);
+  if(progress < -0.5 || progress > 2) return;
+  overviewCards.forEach((card, i) => {
+    const factor = (i % 2 === 0) ? -1 : 1;
+    const dy = progress * 60 * factor * (i * 0.12 + 0.5);
+    const dx = Math.sin(progress * 1.5 + i * 0.7) * (8 + i * 1.5);
+    const rotate = (i % 2 === 0 ? -2 : 1.5) + Math.sin(progress + i) * 0.8;
+    const blur = Math.max(0, (1 - Math.abs(progress - 0.3 - i * 0.08)) * 0);
+    card.style.transform = `translateY(${dy}px) translateX(${dx}px) rotate(${rotate}deg)`;
+    card.style.filter = blur > 0 ? `blur(${blur}px)` : '';
+  });
+}
+window.addEventListener('scroll', parallaxOverview, {passive:true});
+
+/* ─── Features section subtle card parallax ─────────────────────────────── */
+const featureCards = document.querySelectorAll('.feature-card');
+function parallaxFeatures(){
+  const section = document.getElementById('features');
+  const rect = section.getBoundingClientRect();
+  const progress = -rect.top / rect.height;
+  if(progress < -0.3 || progress > 1.2) return;
+  featureCards.forEach((card, i) => {
+    const col = i % 3;
+    const speeds = [0.04, 0, -0.04];
+    const dy = progress * 60 * speeds[col];
+    card.style.transform = card.style.transform.includes('translateY') ? card.style.transform : '';
+    card.querySelector('.fc-icon') && (card.querySelector('.fc-icon').style.transform = `translateY(${-dy * 0.5}px)`);
+  });
+}
+window.addEventListener('scroll', parallaxFeatures, {passive:true});
+
+/* ─── Dark section parallax ─────────────────────────────────────────────── */
+const dsGlow1 = document.querySelector('.ds-glow-1');
+const dsGlow2 = document.querySelector('.ds-glow-2');
+const dsGridPattern = document.querySelector('.ds-grid-pattern');
+function parallaxDarkSection(){
+  const section = document.getElementById('dashboard-section');
+  const rect = section.getBoundingClientRect();
+  const progress = -rect.top / rect.height;
+  if(progress < -0.5 || progress > 1.5) return;
+  if(dsGlow1) dsGlow1.style.transform = `translateY(${progress * 80}px) scale(${1 + progress * 0.15})`;
+  if(dsGlow2) dsGlow2.style.transform = `translateY(${-progress * 60}px) scale(${1 + progress * 0.1})`;
+  if(dsGridPattern) dsGridPattern.style.transform = `translateY(${progress * 30}px)`;
+}
+window.addEventListener('scroll', parallaxDarkSection, {passive:true});
+
+/* ─── CTA floating cards depth parallax ─────────────────────────────────── */
+function parallaxCTA(){
+  const section = document.getElementById('cta');
+  const rect = section.getBoundingClientRect();
+  const progress = -rect.top / rect.height;
+  if(progress < -0.5 || progress > 1.5) return;
+  document.querySelectorAll('.cta-float-card').forEach((card, i) => {
+    const speeds = [0.12, -0.1, 0.08];
+    card.style.transform += ` translateY(${progress * 40 * speeds[i]}px)`;
+  });
+}
+window.addEventListener('scroll', parallaxCTA, {passive:true});
+
+/* ─── Reveal on scroll ───────────────────────────────────────────────────── */
+const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+reveals.forEach(el => observer.observe(el));
+
+/* ─── Flow section ───────────────────────────────────────────────────────── */
+const flowLine = document.getElementById('flow-line');
+const flowSteps = document.querySelectorAll('.flow-step');
+const flowSection = document.getElementById('flow-steps');
+function updateFlow(){
+  if(!flowSection) return;
+  const rect = flowSection.getBoundingClientRect();
+  const wh = window.innerHeight;
+  const pct = Math.max(0, Math.min(1, (wh - rect.top) / (rect.height + wh * 0.4)));
+  flowLine.style.height = (pct * 100) + '%';
+  const total = flowSteps.length;
+  flowSteps.forEach((step, i) => {
+    const threshold = (i / total) * 0.85;
+    const dot = step.querySelector('.flow-dot');
+    const icon = step.querySelector('.flow-dot-icon');
+    if(pct > threshold){
+      step.classList.add('active');
+      dot.classList.add('active');
+      if(icon){ icon.style.color = 'white'; }
+    }
+  });
+}
+window.addEventListener('scroll', updateFlow, {passive:true});
+updateFlow();
+
+/* ─── Diferenciais focus ─────────────────────────────────────────────────── */
+const difItems = document.querySelectorAll('.dif-item');
+function updateDiferenciais(){
+  difItems.forEach(item => {
+    const rect = item.getBoundingClientRect();
+    const center = rect.top + rect.height / 2;
+    const wh = window.innerHeight;
+    item.classList.toggle('focused', center > wh * 0.28 && center < wh * 0.72);
+  });
+}
+window.addEventListener('scroll', updateDiferenciais, {passive:true});
+
+/* ─── Profile tabs ───────────────────────────────────────────────────────── */
+document.querySelectorAll('.prof-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.prof-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.prof-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panel = document.getElementById('prof-' + tab.dataset.profile);
+    if(panel){ panel.classList.add('active'); lucide.createIcons(); }
+  });
+});
+
+/* ─── Dashboard bars ─────────────────────────────────────────────────────── */
+const dsSection = document.getElementById('dashboard-section');
+let dsAnimated = false;
+const dsObserver = new IntersectionObserver(entries => {
+  if(entries[0].isIntersecting && !dsAnimated){
+    dsAnimated = true;
+    document.querySelectorAll('.ds-bar').forEach(bar => {
+      const h = bar.dataset.h || 80;
+      bar.style.height = '0%';
+      setTimeout(() => { bar.style.height = h + '%'; bar.style.transition = 'height .9s cubic-bezier(.16,1,.3,1)'; }, 200);
+    });
+  }
+},{threshold:0.3});
+dsObserver.observe(dsSection);
+
+/* ─── Counter animation ───────────────────────────────────────────────────── */
+function animateCounters(parent){
+  parent.querySelectorAll('.counter[data-target]').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    let current = 0, step = 0;
+    const totalSteps = 45;
+    const timer = setInterval(() => {
+      step++;
+      const progress = step / totalSteps;
+      const eased = 1 - Math.pow(1 - progress, 3);
+      current = Math.floor(eased * target);
+      el.textContent = current.toLocaleString('pt-BR');
+      if(step >= totalSteps){ el.textContent = target.toLocaleString('pt-BR'); clearInterval(timer); }
+    }, 28);
+  });
+}
+const dsCountObserver = new IntersectionObserver(entries => {
+  if(entries[0].isIntersecting){ animateCounters(dsSection); dsCountObserver.disconnect(); }
+},{threshold:0.3});
+dsCountObserver.observe(dsSection);
+
+/* ─── Date ───────────────────────────────────────────────────────────────── */
+const d = new Date();
+document.getElementById('today-date') && (document.getElementById('today-date').textContent = d.toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'}));
+</script>
+
+/* ─── Particle canvas ───────────────────────────────────────────────────── */
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+for(let i=0;i<55;i++){
+  particles.push({
+    x: Math.random()*window.innerWidth,
+    y: Math.random()*window.innerHeight,
+    r: Math.random()*2+0.5,
+    vx: (Math.random()-.5)*0.3,
+    vy: (Math.random()-.5)*0.2,
+    alpha: Math.random()*0.4+0.1,
+    color: ['#60A5FA','#A78BFA','#34D399','#06B6D4'][Math.floor(Math.random()*4)]
+  });
+}
+
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0)p.x=canvas.width; if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height; if(p.y>canvas.height)p.y=0;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=p.color;
+    ctx.globalAlpha=p.alpha;
+    ctx.fill();
+  });
+  ctx.globalAlpha=1;
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+/* ─── Hero parallax ─────────────────────────────────────────────────────── */
+const heroVisual = document.getElementById('hero-visual');
+const layerDash  = document.getElementById('layer-dash');
+const layerM1    = document.getElementById('layer-m1');
+const layerM2    = document.getElementById('layer-m2');
+const layerM3    = document.getElementById('layer-m3');
+const layerM4    = document.getElementById('layer-m4');
+const layerM5    = document.getElementById('layer-m5');
+const heroGlow   = document.getElementById('hero-glow');
+const heroTitle  = document.getElementById('hero-title');
+const heroSub    = document.getElementById('hero-sub');
+const heroStats  = document.getElementById('hero-stats');
+const heroBadge  = document.getElementById('hero-badge');
+const heroBtns   = document.getElementById('hero-btns');
+const connSvg    = document.getElementById('conn-svg');
+const heroEl     = document.getElementById('hero');
+
+function parallaxHero(){
+  const sy = window.scrollY;
+  const heroH = heroEl.offsetHeight;
+  if(sy > heroH * 1.2) return;
+  const pct = sy / heroH;
+
+  // Dashboard — moves slowest (0.2x)
+  layerDash.style.transform = `translateY(${sy * 0.22}px)`;
+  // Opacity fades as you leave hero
+  layerDash.style.opacity = Math.max(0, 1 - pct * 2.5);
+
+  // Metric cards at different speeds
+  layerM1.style.transform = `translateY(${sy * 0.38}px) translateX(${sy * 0.04}px)`;
+  layerM2.style.transform = `translateY(${sy * 0.28}px) translateX(${sy * 0.02}px)`;
+  layerM3.style.transform = `translateY(${sy * 0.45}px) translateX(${-sy * 0.03}px)`;
+  layerM4.style.transform = `translateY(${sy * 0.32}px)`;
+  layerM5.style.transform = `translateY(${sy * 0.42}px) translateX(${sy * 0.02}px)`;
+  [layerM1,layerM2,layerM3,layerM4,layerM5].forEach(m => {
+    m.style.opacity = Math.max(0, 1 - pct * 2.8);
+  });
+
+  // Connection lines — rotate slightly
+  connSvg.style.transform = `rotate(${sy * 0.02}deg)`;
+  connSvg.style.opacity = Math.max(0, 1 - pct * 2.5);
+
+  // Glow follows mouse feel via scroll
+  heroGlow.style.transform = `scale(${1 + pct * 0.3}) translateY(${sy * 0.1}px)`;
+
+  // Hero text parallax (slight upward)
+  heroTitle.style.transform = `translateY(${sy * 0.12}px)`;
+  heroSub.style.transform = `translateY(${sy * 0.1}px)`;
+  heroStats.style.transform = `translateY(${sy * 0.08}px)`;
+  heroBadge.style.transform = `translateY(${sy * 0.14}px)`;
+  heroBtns.style.transform = `translateY(${sy * 0.09}px)`;
+
+  // Overall hero opacity
+  heroEl.style.opacity = Math.max(0.2, 1 - pct * 1.4);
+}
+
+window.addEventListener('scroll', parallaxHero, {passive:true});
+
+/* ─── Overview cards parallax ───────────────────────────────────────────── */
+const overviewCards = document.querySelectorAll('.overview-card');
+function parallaxOverview(){
+  const section = document.getElementById('overview');
+  const rect = section.getBoundingClientRect();
+  const progress = (-rect.top) / rect.height;
+  if(progress < -0.3 || progress > 1.2) return;
+  overviewCards.forEach((card, i) => {
+    const speed = (i % 2 === 0) ? -0.06 : 0.06;
+    const rotate = parseFloat(card.style.transform.match(/rotate\(([^)]+)\)/)?.[1]) || 0;
+    const dy = progress * 120 * speed * (i + 1) * 0.3;
+    const dx = Math.sin(progress * Math.PI + i) * 8;
+    card.style.transform = `translateY(${dy}px) translateX(${dx}px) rotate(${rotate}deg)`;
+  });
+}
+window.addEventListener('scroll', parallaxOverview, {passive:true});
+
+/* ─── Reveal on scroll ───────────────────────────────────────────────────── */
+const reveals = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if(e.isIntersecting){ e.target.classList.add('visible'); }
+  });
+},{threshold:0.12,rootMargin:'0px 0px -40px 0px'});
+reveals.forEach(el => observer.observe(el));
+
+/* ─── Flow section scroll animation ─────────────────────────────────────── */
+const flowLine = document.getElementById('flow-line');
+const flowSteps = document.querySelectorAll('.flow-step');
+const flowSection = document.getElementById('flow-steps');
+
+function updateFlow(){
+  if(!flowSection) return;
+  const rect = flowSection.getBoundingClientRect();
+  const wh = window.innerHeight;
+  // How far through the section we are
+  const pct = Math.max(0, Math.min(1, (wh - rect.top) / (rect.height + wh * 0.4)));
+  flowLine.style.height = (pct * 100) + '%';
+  const total = flowSteps.length;
+  flowSteps.forEach((step, i) => {
+    const threshold = (i / total) * 0.85;
+    const dot = step.querySelector('.flow-dot');
+    const icon = step.querySelector('.flow-dot-icon');
+    if(pct > threshold){
+      step.classList.add('active');
+      dot.classList.add('active');
+      if(icon){ icon.style.color = 'white'; icon.style.strokeWidth = '2'; }
+    }
+  });
+}
+window.addEventListener('scroll', updateFlow, {passive:true});
+updateFlow();
+
+/* ─── Diferenciais focus on scroll ─────────────────────────────────────── */
+const difItems = document.querySelectorAll('.dif-item');
+function updateDiferenciais(){
+  difItems.forEach(item => {
+    const rect = item.getBoundingClientRect();
+    const center = rect.top + rect.height/2;
+    const wh = window.innerHeight;
+    const isFocused = center > wh * 0.3 && center < wh * 0.7;
+    item.classList.toggle('focused', isFocused);
+  });
+}
+window.addEventListener('scroll', updateDiferenciais, {passive:true});
+
+/* ─── Profile tabs ───────────────────────────────────────────────────────── */
+document.querySelectorAll('.prof-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.prof-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.prof-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panel = document.getElementById('prof-' + tab.dataset.profile);
+    if(panel){ panel.classList.add('active'); lucide.createIcons(); }
+  });
+});
+
+/* ─── Dashboard bars animate on scroll ──────────────────────────────────── */
+const dsSection = document.getElementById('dashboard-section');
+let dsAnimated = false;
+const dsObserver = new IntersectionObserver(entries => {
+  if(entries[0].isIntersecting && !dsAnimated){
+    dsAnimated = true;
+    const bars = document.querySelectorAll('.ds-bar');
+    bars.forEach(bar => {
+      const h = bar.dataset.h || 80;
+      bar.style.height = '0%';
+      setTimeout(() => { bar.style.height = h + '%'; bar.style.transition = 'height .8s cubic-bezier(.16,1,.3,1)'; }, 200);
+    });
+  }
+},{threshold:0.3});
+dsObserver.observe(dsSection);
+
+/* ─── Counter animation ───────────────────────────────────────────────────── */
+function animateCounters(parent){
+  parent.querySelectorAll('.counter[data-target]').forEach(el => {
+    const target = parseInt(el.dataset.target);
+    let current = 0;
+    const increment = target / 40;
+    const timer = setInterval(() => {
+      current = Math.min(current + increment, target);
+      el.textContent = Math.floor(current).toLocaleString('pt-BR');
+      if(current >= target) clearInterval(timer);
+    }, 30);
+  });
+}
+const dsCountObserver = new IntersectionObserver(entries => {
+  if(entries[0].isIntersecting){ animateCounters(dsSection); dsCountObserver.disconnect(); }
+},{threshold:0.3});
+dsCountObserver.observe(dsSection);
+
+/* ─── Mouse-based glow tracking in hero ─────────────────────────────────── */
+document.getElementById('hero').addEventListener('mousemove', e => {
+  const glow = document.getElementById('hero-glow');
+  const rect = document.getElementById('hero').getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  glow.style.left = (x - 350) + 'px';
+  glow.style.top  = (y - 350) + 'px';
+},{passive:true});
+</script>
+</body>
+</html></body>
+</html>
