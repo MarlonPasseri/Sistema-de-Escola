@@ -1,3 +1,11 @@
 import { Module } from '@nestjs/common';
-@Module({})
+import { StudentsModule } from '../students/students.module';
+import { EnrollmentsController } from './enrollments.controller';
+import { EnrollmentsService } from './enrollments.service';
+
+@Module({
+  imports: [StudentsModule],
+  controllers: [EnrollmentsController],
+  providers: [EnrollmentsService],
+})
 export class EnrollmentsModule {}
