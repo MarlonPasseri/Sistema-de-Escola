@@ -13,6 +13,7 @@ import { EnrollmentsModule } from './modules/enrollments/enrollments.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { AssessmentsModule } from './modules/assessments/assessments.module';
 import { CommunicationModule } from './modules/communication/communication.module';
+import { OccurrencesModule } from './modules/occurrences/occurrences.module';
 import { StudentSuccessModule } from './modules/student-success/student-success.module';
 import { InterventionsModule } from './modules/interventions/interventions.module';
 import { AuditModule } from './modules/audit/audit.module';
@@ -33,6 +34,7 @@ import { AuditModule } from './modules/audit/audit.module';
     AttendanceModule,
     AssessmentsModule,
     CommunicationModule,
+    OccurrencesModule,
     StudentSuccessModule,
     InterventionsModule,
     AuditModule,
