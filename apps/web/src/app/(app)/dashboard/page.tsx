@@ -81,14 +81,17 @@ function useDashboardData() {
   return useQuery({
     queryKey: ['dashboard'],
     queryFn: async () => {
-      const [students, risks] = await Promise.all([
+      const [students, risks, success] = await Promise.all([
         api.get('/students?limit=1'),
-        api.get('/students?riskLevel=HIGH&limit=5'),
+        api.get('/student-success/risks', { params: { riskLevel: 'HIGH', limit: 5 } }),
+        api.get('/student-success/dashboard'),
       ]);
       return {
         totalStudents: students.data.total as number,
         highRisk: risks.data.data as any[],
         highRiskTotal: risks.data.total as number,
+        openInterventions: success.data.openInterventions as number,
+        unreadRecipients: success.data.unreadRecipients as number,
       };
     },
   });
