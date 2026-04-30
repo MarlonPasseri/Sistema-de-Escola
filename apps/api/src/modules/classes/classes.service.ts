@@ -29,7 +29,7 @@ export class ClassesService {
         enrollments: { where: { isActive: true }, include: { student: true } },
       },
     });
-    if (!klass) throw new NotFoundException('Turma nao encontrada');
+    if (!klass) throw new NotFoundException('Turma não encontrada');
     return klass;
   }
 
@@ -37,7 +37,7 @@ export class ClassesService {
     const year = await this.prisma.academicYear.findFirst({
       where: { id: dto.academicYearId, schoolId },
     });
-    if (!year) throw new NotFoundException('Ano letivo nao encontrado');
+    if (!year) throw new NotFoundException('Ano letivo não encontrado');
     return this.prisma.class.create({ data: { ...dto, schoolId } });
   }
 
@@ -56,7 +56,7 @@ export class ClassesService {
     const subject = await this.prisma.subject.findFirst({
       where: { id: dto.subjectId, schoolId },
     });
-    if (!subject) throw new NotFoundException('Disciplina nao encontrada');
+    if (!subject) throw new NotFoundException('Disciplina não encontrada');
 
     return this.prisma.classSubject.upsert({
       where: { classId_subjectId: { classId, subjectId: dto.subjectId } },

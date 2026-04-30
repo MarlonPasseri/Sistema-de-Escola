@@ -27,7 +27,7 @@ export class InterventionsController {
 
   @Post()
   @Roles(UserRole.SCHOOL_ADMIN, UserRole.COORDINATOR)
-  @ApiOperation({ summary: 'Abrir plano de intervencao' })
+  @ApiOperation({ summary: 'Abrir plano de intervenção' })
   create(@SchoolId() schoolId: string, @CurrentUser() actor: AuthUser, @Body() dto: CreateInterventionDto) {
     return this.service.create(schoolId, actor.id, dto);
   }

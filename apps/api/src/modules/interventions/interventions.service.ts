@@ -40,7 +40,7 @@ export class InterventionsService {
       where: { id, schoolId },
       include: this.include(true),
     });
-    if (!intervention) throw new NotFoundException('Plano de intervencao nao encontrado');
+    if (!intervention) throw new NotFoundException('Plano de intervenção não encontrado');
     return intervention;
   }
 
@@ -48,7 +48,7 @@ export class InterventionsService {
     const student = await this.prisma.student.findFirst({
       where: { id: dto.studentId, schoolId, isActive: true },
     });
-    if (!student) throw new NotFoundException('Aluno nao encontrado');
+    if (!student) throw new NotFoundException('Aluno não encontrado');
 
     const riskScore = dto.riskScoreId
       ? await this.prisma.riskScore.findFirst({ where: { id: dto.riskScoreId, studentId: dto.studentId } })
@@ -70,7 +70,7 @@ export class InterventionsService {
     await this.studentsService.addTimelineEvent(
       dto.studentId,
       'INTERVENTION_CREATED',
-      `Plano de intervencao aberto: ${dto.reason}`,
+      `Plano de intervenção aberto: ${dto.reason}`,
       { interventionId: intervention.id },
     );
 
@@ -103,7 +103,7 @@ export class InterventionsService {
       await this.studentsService.addTimelineEvent(
         current.studentId,
         'INTERVENTION_UPDATED',
-        `Plano de intervencao alterado para ${status}`,
+        `Plano de intervenção alterado para ${status}`,
         { interventionId: id, status },
       );
     }
@@ -120,7 +120,7 @@ export class InterventionsService {
     await this.studentsService.addTimelineEvent(
       intervention.studentId,
       'INTERVENTION_NOTE_ADDED',
-      `Nota adicionada ao plano de intervencao: ${dto.content}`,
+      `Nota adicionada ao plano de intervenção: ${dto.content}`,
       { interventionId: id, noteId: note.id },
     );
 

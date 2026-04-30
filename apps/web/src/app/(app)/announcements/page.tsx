@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { MessageSquare, Send } from 'lucide-react';
 import { AnnouncementAudience } from '@edupulse/types';
 import { api } from '@/lib/api';
+import { useToast } from '@/components/ui/toast';
 
 function useAnnouncements() {
   return useQuery({
@@ -25,8 +26,34 @@ function useReadStatus(id: string) {
   });
 }
 
+function cleanDisplayText(value?: string | null) {
+  if (!value) return '';
+
+  return value
+    .replace(/Convoca��o/g, 'Convocação')
+    .replace(/convoca��o/g, 'convocação')
+    .replace(/reuni�o/g, 'reunião')
+    .replace(/Reuni�o/g, 'Reunião')
+    .replace(/Jo�o/g, 'João')
+    .replace(/S�o/g, 'São')
+    .replace(/n�o/g, 'não')
+    .replace(/N�o/g, 'Não')
+    .replace(/respons�veis/g, 'responsáveis')
+    .replace(/Respons�veis/g, 'Responsáveis')
+    .replace(/frequ�ncia/g, 'frequência')
+    .replace(/Frequ�ncia/g, 'Frequência')
+    .replace(/Matem�tica/g, 'Matemática')
+    .replace(/Calend�rio/g, 'Calendário')
+    .replace(/avalia��es/g, 'avaliações')
+    .replace(/coordena��o/g, 'coordenação')
+    .replace(/dispon�veis/g, 'disponíveis')
+    .replace(/M�dia/g, 'Média')
+    .replace(/\s�\s/g, ' - ');
+}
+
 export default function AnnouncementsPage() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { data, isLoading } = useAnnouncements();
   const { data: classes } = useClasses();
   const [selectedId, setSelectedId] = useState('');
@@ -50,8 +77,9 @@ export default function AnnouncementsPage() {
       setForm({ title: '', content: '', audience: AnnouncementAudience.ALL, classId: '' });
       queryClient.invalidateQueries({ queryKey: ['announcements'] });
       setError('');
+      toast.success('Comunicado enviado.');
     },
-    onError: (err: any) => setError(err.response?.data?.message ?? 'Nao foi possivel enviar o comunicado.'),
+    onError: (err: any) => { const message = cleanDisplayText(err.response?.data?.message) || 'Não foi possível enviar o comunicado.'; setError(message); toast.error(message); },
   });
 
   return (
@@ -149,7 +177,7 @@ export default function AnnouncementsPage() {
                     className="cursor-pointer hover:bg-slate-50"
                   >
                     <td className="px-5 py-3.5">
-                      <p className="font-medium text-text-primary">{announcement.title}</p>
+                      <p className="font-medium text-text-primary">{cleanDisplayText(announcement.title)}</p>
                       <p className="text-xs text-text-secondary">{new Date(announcement.createdAt).toLocaleDateString('pt-BR')}</p>
                     </td>
                     <td className="px-5 py-3.5 text-text-secondary">{announcement.audience}</td>
@@ -186,11 +214,11 @@ export default function AnnouncementsPage() {
                 </div>
               </div>
               <div>
-                <p className="mb-2 text-xs font-semibold uppercase text-text-secondary">Nao lidos</p>
+                <p className="mb-2 text-xs font-semibold uppercase text-text-secondary">Não lidos</p>
                 <div className="max-h-80 space-y-2 overflow-auto">
                   {readStatus.unread?.length ? readStatus.unread.map((recipient: any) => (
                     <div key={recipient.id} className="rounded-lg border border-border px-3 py-2 text-sm text-text-primary">
-                      {recipient.student?.name ?? recipient.userId ?? 'Destinatario'}
+                      {cleanDisplayText(recipient.student?.name) || recipient.userId || 'Destinatário'}
                     </div>
                   )) : <p className="text-sm text-success">Todos leram.</p>}
                 </div>

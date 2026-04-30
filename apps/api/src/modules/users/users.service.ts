@@ -55,7 +55,7 @@ export class UsersService {
       where: { id, schoolId, isActive: true },
       select: USER_SELECT,
     });
-    if (!user) throw new NotFoundException('Usuario nao encontrado');
+    if (!user) throw new NotFoundException('Usuário não encontrado');
     return user;
   }
 
@@ -63,7 +63,7 @@ export class UsersService {
     const existing = await this.prisma.user.findUnique({
       where: { schoolId_email: { schoolId, email: dto.email } },
     });
-    if (existing) throw new ConflictException('E-mail ja cadastrado nesta escola');
+    if (existing) throw new ConflictException('E-mail já cadastrado nesta escola');
 
     const passwordHash = await argon2.hash(dto.password);
     return this.prisma.user.create({

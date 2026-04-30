@@ -30,7 +30,7 @@ export default function NewStudentPage() {
       const { data } = await api.post('/students', payload);
       router.push(`/students/${data.id}`);
     } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Nao foi possivel cadastrar o aluno.');
+      setError(err.response?.data?.message ?? 'Não foi possível cadastrar o aluno.');
     } finally {
       setLoading(false);
     }
@@ -55,7 +55,7 @@ export default function NewStudentPage() {
       <form onSubmit={submit} className="rounded-xl border border-border bg-card p-5 shadow-sm">
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="space-y-1.5">
-            <span className="text-xs font-semibold uppercase text-text-secondary">Matricula</span>
+            <span className="text-xs font-semibold uppercase text-text-secondary">Matrícula</span>
             <input
               required
               value={form.registrationId}
@@ -85,13 +85,13 @@ export default function NewStudentPage() {
           </label>
 
           <label className="space-y-1.5">
-            <span className="text-xs font-semibold uppercase text-text-secondary">Genero</span>
+            <span className="text-xs font-semibold uppercase text-text-secondary">Gênero</span>
             <select
               value={form.gender}
               onChange={(e) => update('gender', e.target.value)}
               className="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
             >
-              <option value="">Nao informado</option>
+              <option value="">Não informado</option>
               <option value="F">Feminino</option>
               <option value="M">Masculino</option>
               <option value="OTHER">Outro</option>
@@ -99,7 +99,7 @@ export default function NewStudentPage() {
           </label>
 
           <label className="space-y-1.5 sm:col-span-2">
-            <span className="text-xs font-semibold uppercase text-text-secondary">Endereco</span>
+            <span className="text-xs font-semibold uppercase text-text-secondary">Endereço</span>
             <input
               value={form.address}
               onChange={(e) => update('address', e.target.value)}
@@ -108,7 +108,7 @@ export default function NewStudentPage() {
           </label>
 
           <label className="space-y-1.5 sm:col-span-2">
-            <span className="text-xs font-semibold uppercase text-text-secondary">Observacoes</span>
+            <span className="text-xs font-semibold uppercase text-text-secondary">Observações</span>
             <textarea
               value={form.notes}
               onChange={(e) => update('notes', e.target.value)}

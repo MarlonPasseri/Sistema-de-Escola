@@ -20,7 +20,7 @@ export class SubjectsService {
       where: { id, schoolId },
       include: { classSubjects: { include: { class: true } } },
     });
-    if (!subject) throw new NotFoundException('Disciplina nao encontrada');
+    if (!subject) throw new NotFoundException('Disciplina não encontrada');
     return subject;
   }
 

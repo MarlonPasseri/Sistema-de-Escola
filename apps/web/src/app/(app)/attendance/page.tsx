@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { CalendarCheck, Save } from 'lucide-react';
+import { CalendarCheck, CheckCircle2, Save } from 'lucide-react';
 import { AttendanceStatus } from '@edupulse/types';
 import { api } from '@/lib/api';
+import { useToast } from '@/components/ui/toast';
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -24,12 +25,14 @@ function useSession(sessionId: string) {
 
 export default function AttendancePage() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { data: classes, isLoading } = useClasses();
   const [classSubjectId, setClassSubjectId] = useState('');
   const [date, setDate] = useState(today());
   const [sessionId, setSessionId] = useState('');
   const [records, setRecords] = useState<Record<string, AttendanceStatus>>({});
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const { data: session } = useSession(sessionId);
 
   const classSubjects = useMemo(() => {
@@ -44,13 +47,25 @@ export default function AttendancePage() {
   const students = session?.classSubject?.class?.enrollments?.map((item: any) => item.student) ?? [];
 
   const createSession = useMutation({
-    mutationFn: () => api.post('/attendance/sessions', { classSubjectId, date }),
+    mutationFn: async () => {
+      const { data: existing } = await api.get('/attendance/sessions', {
+        params: { classSubjectId, from: date, to: date, limit: 1 },
+      });
+      const existingSession = existing?.data?.[0];
+      if (existingSession) return { data: existingSession };
+
+      const response = await api.post('/attendance/sessions', { classSubjectId, date });
+      return { data: response.data };
+    },
     onSuccess: ({ data }) => {
       setSessionId(data.id);
       setRecords({});
       setError('');
+      setSuccess('Chamada aberta. Você pode registrar a frequência.');
+      toast.info('Chamada aberta.');
+      queryClient.invalidateQueries({ queryKey: ['attendance-session', data.id] });
     },
-    onError: (err: any) => setError(err.response?.data?.message ?? 'Nao foi possivel criar a sessao.'),
+    onError: (err: any) => { const message = err.response?.data?.message ?? 'Não foi possível criar a sessão.'; setError(message); toast.error(message); },
   });
 
   const saveAttendance = useMutation({
@@ -61,13 +76,25 @@ export default function AttendancePage() {
           status: records[student.id] ?? AttendanceStatus.PRESENT,
         })),
       }),
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
+      queryClient.setQueryData(['attendance-session', sessionId], data);
       queryClient.invalidateQueries({ queryKey: ['attendance-session', sessionId] });
       queryClient.invalidateQueries({ queryKey: ['students'] });
       setError('');
+      setSuccess('Frequência salva com sucesso.');
+      toast.success('Frequência salva.');
     },
-    onError: (err: any) => setError(err.response?.data?.message ?? 'Nao foi possivel salvar a frequencia.'),
+    onError: (err: any) => { const message = err.response?.data?.message ?? 'Não foi possível salvar a frequência.'; setError(message); toast.error(message); },
   });
+
+  useEffect(() => {
+    if (!session?.records) return;
+
+    const savedRecords = Object.fromEntries(
+      session.records.map((record: any) => [record.studentId, record.status as AttendanceStatus]),
+    );
+    setRecords(savedRecords);
+  }, [session]);
 
   return (
     <div className="space-y-5">
@@ -85,6 +112,8 @@ export default function AttendancePage() {
         <form
           onSubmit={(event) => {
             event.preventDefault();
+            setError('');
+            setSuccess('');
             createSession.mutate();
           }}
           className="grid gap-3 md:grid-cols-[1fr_180px_160px]"
@@ -92,7 +121,13 @@ export default function AttendancePage() {
           <select
             required
             value={classSubjectId}
-            onChange={(event) => setClassSubjectId(event.target.value)}
+            onChange={(event) => {
+              setClassSubjectId(event.target.value);
+              setSessionId('');
+              setRecords({});
+              setError('');
+              setSuccess('');
+            }}
             className="rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
           >
             <option value="">Selecione turma e disciplina</option>
@@ -104,13 +139,24 @@ export default function AttendancePage() {
             type="date"
             required
             value={date}
-            onChange={(event) => setDate(event.target.value)}
+            onChange={(event) => {
+              setDate(event.target.value);
+              setSessionId('');
+              setRecords({});
+              setError('');
+              setSuccess('');
+            }}
             className="rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-primary"
           />
           <button disabled={createSession.isPending || isLoading} className="rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white disabled:opacity-60">
             Abrir chamada
           </button>
         </form>
+        {success && (
+          <p className="mt-3 flex items-center gap-2 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-success">
+            <CheckCircle2 size={16} /> {success}
+          </p>
+        )}
         {error && <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-danger">{error}</p>}
       </section>
 
@@ -119,18 +165,32 @@ export default function AttendancePage() {
           <h2 className="font-semibold text-text-primary">Lista de chamada</h2>
           <button
             disabled={!sessionId || saveAttendance.isPending || students.length === 0}
-            onClick={() => saveAttendance.mutate()}
+            onClick={() => {
+              setError('');
+              setSuccess('');
+              saveAttendance.mutate();
+            }}
             className="flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-white disabled:opacity-60"
           >
             <Save size={16} /> Salvar
           </button>
         </div>
+        {success && (
+          <div className="border-b border-border bg-green-50 px-5 py-3 text-sm font-medium text-success">
+            <span className="inline-flex items-center gap-2"><CheckCircle2 size={16} /> {success}</span>
+          </div>
+        )}
+        {error && (
+          <div className="border-b border-border bg-red-50 px-5 py-3 text-sm font-medium text-danger">
+            {error}
+          </div>
+        )}
 
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border bg-slate-50 text-left text-xs font-semibold uppercase text-text-secondary">
               <th className="px-5 py-3">Aluno</th>
-              <th className="px-5 py-3">Matricula</th>
+              <th className="px-5 py-3">Matrícula</th>
               <th className="px-5 py-3">Status</th>
             </tr>
           </thead>

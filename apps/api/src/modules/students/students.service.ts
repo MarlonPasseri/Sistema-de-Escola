@@ -86,7 +86,7 @@ export class StudentsService {
     if (exists) throw new ConflictException('Matrícula já cadastrada nesta escola');
 
     const student = await this.prisma.student.create({
-      data: { ...dto, schoolId },
+      data: { ...this.normalizeCreateStudentData(dto), schoolId },
       include: STUDENT_INCLUDE,
     });
 
@@ -98,7 +98,7 @@ export class StudentsService {
     await this.findById(schoolId, id);
     return this.prisma.student.update({
       where: { id },
-      data: dto,
+      data: this.normalizeUpdateStudentData(dto),
       include: STUDENT_INCLUDE,
     });
   }
@@ -180,5 +180,19 @@ export class StudentsService {
     return this.prisma.studentTimeline.create({
       data: { studentId, type, description, metadata },
     });
+  }
+
+  private normalizeCreateStudentData(dto: CreateStudentDto) {
+    return {
+      ...dto,
+      birthDate: dto.birthDate ? new Date(`${dto.birthDate}T00:00:00.000Z`) : undefined,
+    };
+  }
+
+  private normalizeUpdateStudentData(dto: UpdateStudentDto) {
+    return {
+      ...dto,
+      birthDate: dto.birthDate ? new Date(`${dto.birthDate}T00:00:00.000Z`) : undefined,
+    };
   }
 }

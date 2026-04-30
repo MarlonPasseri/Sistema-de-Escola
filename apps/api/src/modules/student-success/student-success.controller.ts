@@ -17,7 +17,7 @@ export class StudentSuccessController {
 
   @Get('dashboard')
   @Roles(UserRole.SCHOOL_ADMIN, UserRole.COORDINATOR, UserRole.TEACHER)
-  @ApiOperation({ summary: 'Dashboard de risco academico' })
+  @ApiOperation({ summary: 'Dashboard de risco acadêmico' })
   dashboard(@SchoolId() schoolId: string) {
     return this.service.getDashboard(schoolId);
   }

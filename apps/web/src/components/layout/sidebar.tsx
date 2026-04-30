@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Users, GraduationCap, CalendarCheck,
-  ClipboardList, MessageSquare, AlertTriangle, ShieldAlert, BookOpen, LogOut, Zap,
+  ClipboardList, MessageSquare, AlertTriangle, ShieldAlert, BookOpen, LogOut, Zap, Settings,
 } from 'lucide-react';
 import { logout } from '@/lib/auth';
 import { cn } from '@/lib/utils';
@@ -20,6 +20,8 @@ const NAV = [
   { label: 'Comunicados', href: '/announcements', icon: MessageSquare },
   { label: 'Intervenções', href: '/interventions', icon: AlertTriangle },
   { label: 'Professores', href: '/teachers', icon: Users },
+  { label: 'Usuários', href: '/users', icon: Users },
+  { label: 'Configurações', href: '/settings', icon: Settings },
 ];
 
 export function Sidebar() {

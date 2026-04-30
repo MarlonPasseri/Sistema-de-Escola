@@ -12,7 +12,7 @@ export class EnrollmentsService {
 
   async listByClass(schoolId: string, classId: string) {
     const klass = await this.prisma.class.findFirst({ where: { id: classId, schoolId } });
-    if (!klass) throw new NotFoundException('Turma nao encontrada');
+    if (!klass) throw new NotFoundException('Turma não encontrada');
 
     return this.prisma.enrollment.findMany({
       where: { classId, isActive: true },
@@ -26,13 +26,13 @@ export class EnrollmentsService {
       this.prisma.class.findFirst({ where: { id: classId, schoolId } }),
       this.prisma.student.findFirst({ where: { id: studentId, schoolId, isActive: true } }),
     ]);
-    if (!klass) throw new NotFoundException('Turma nao encontrada');
-    if (!student) throw new NotFoundException('Aluno nao encontrado');
+    if (!klass) throw new NotFoundException('Turma não encontrada');
+    if (!student) throw new NotFoundException('Aluno não encontrado');
 
     const existing = await this.prisma.enrollment.findFirst({
       where: { studentId, classId, isActive: true },
     });
-    if (existing) throw new ConflictException('Aluno ja esta matriculado nesta turma');
+    if (existing) throw new ConflictException('Aluno já está matriculado nesta turma');
 
     const enrollment = await this.prisma.enrollment.create({
       data: {
@@ -58,7 +58,7 @@ export class EnrollmentsService {
       where: { studentId, classId, isActive: true, class: { schoolId } },
       include: { class: true },
     });
-    if (!enrollment) throw new NotFoundException('Matricula nao encontrada');
+    if (!enrollment) throw new NotFoundException('Matrícula não encontrada');
 
     await this.prisma.enrollment.update({
       where: { id: enrollment.id },

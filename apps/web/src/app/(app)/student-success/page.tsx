@@ -7,6 +7,7 @@ import { Filter, Plus, ShieldAlert } from 'lucide-react';
 import { RiskLevel } from '@edupulse/types';
 import { RiskBadge } from '@/components/ui/risk-badge';
 import { api } from '@/lib/api';
+import { useToast } from '@/components/ui/toast';
 
 function useClasses() {
   return useQuery({ queryKey: ['classes'], queryFn: () => api.get('/classes').then((r) => r.data) });
@@ -38,6 +39,7 @@ function reviewDate() {
 
 export default function StudentSuccessPage() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const { data: classes } = useClasses();
   const [filters, setFilters] = useState<{
     riskLevel: RiskLevel | '';
@@ -59,15 +61,16 @@ export default function StudentSuccessPage() {
         studentId: student.id,
         riskScoreId: student.latestRisk?.id,
         reason: student.latestRisk?.factors?.[0]?.description ?? 'Aluno em acompanhamento preventivo',
-        goal: student.suggestedActions?.[0] ?? 'Reduzir risco academico',
+        goal: student.suggestedActions?.[0] ?? 'Reduzir risco acadêmico',
         reviewDate: reviewDate(),
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['student-success'] });
       queryClient.invalidateQueries({ queryKey: ['interventions'] });
       setError('');
+      toast.success('Intervenção aberta.');
     },
-    onError: (err: any) => setError(err.response?.data?.message ?? 'Nao foi possivel abrir a intervencao.'),
+    onError: (err: any) => { const message = err.response?.data?.message ?? 'Não foi possível abrir a intervenção.'; setError(message); toast.error(message); },
   });
 
   const totals = useMemo(() => {
@@ -103,7 +106,7 @@ export default function StudentSuccessPage() {
           <p className="text-2xl font-bold text-warning">{totals.medium}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-          <p className="text-sm text-text-secondary">Sem intervencao</p>
+          <p className="text-sm text-text-secondary">Sem intervenção</p>
           <p className="text-2xl font-bold text-text-primary">{totals.withoutIntervention}</p>
         </div>
       </div>
@@ -139,7 +142,7 @@ export default function StudentSuccessPage() {
               checked={filters.withoutIntervention}
               onChange={(event) => setFilters((current) => ({ ...current, withoutIntervention: event.target.checked }))}
             />
-            Sem intervencao
+            Sem intervenção
           </label>
           <label className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm text-text-secondary">
             <input
@@ -147,7 +150,7 @@ export default function StudentSuccessPage() {
               checked={filters.unengagedGuardian}
               onChange={(event) => setFilters((current) => ({ ...current, unengagedGuardian: event.target.checked }))}
             />
-            Responsavel sem leitura
+            Responsável sem leitura
           </label>
         </div>
         {error && <p className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-danger">{error}</p>}

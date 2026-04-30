@@ -41,7 +41,7 @@ export class OccurrencesService {
       where: { id, schoolId },
       include: { student: { select: { id: true, name: true, registrationId: true } } },
     });
-    if (!occurrence) throw new NotFoundException('Ocorrencia nao encontrada');
+    if (!occurrence) throw new NotFoundException('Ocorrência não encontrada');
     return occurrence;
   }
 
@@ -49,7 +49,7 @@ export class OccurrencesService {
     const student = await this.prisma.student.findFirst({
       where: { id: dto.studentId, schoolId, isActive: true },
     });
-    if (!student) throw new NotFoundException('Aluno nao encontrado');
+    if (!student) throw new NotFoundException('Aluno não encontrado');
 
     const occurrence = await this.prisma.occurrence.create({
       data: {

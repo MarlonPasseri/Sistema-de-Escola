@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { AlertTriangle, MessageSquarePlus, Save } from 'lucide-react';
 import { InterventionStatus } from '@edupulse/types';
 import { api } from '@/lib/api';
+import { useToast } from '@/components/ui/toast';
 
 function useInterventions(status: string) {
   return useQuery({
@@ -25,6 +26,7 @@ function useIntervention(id: string) {
 
 export default function InterventionsPage() {
   const queryClient = useQueryClient();
+  const toast = useToast();
   const [status, setStatus] = useState('');
   const [selectedId, setSelectedId] = useState('');
   const [note, setNote] = useState('');
@@ -39,8 +41,13 @@ export default function InterventionsPage() {
       setSelectedId(data.id);
       queryClient.invalidateQueries({ queryKey: ['interventions'] });
       setError('');
+      toast.success('Plano atualizado.');
     },
-    onError: (err: any) => setError(err.response?.data?.message ?? 'Nao foi possivel atualizar o plano.'),
+    onError: (err: any) => {
+      const message = err.response?.data?.message ?? 'Nao foi possivel atualizar o plano.';
+      setError(message);
+      toast.error(message);
+    },
   });
 
   const addNote = useMutation({
@@ -50,8 +57,13 @@ export default function InterventionsPage() {
       queryClient.invalidateQueries({ queryKey: ['interventions'] });
       queryClient.invalidateQueries({ queryKey: ['interventions', selectedId] });
       setError('');
+      toast.success('Nota adicionada.');
     },
-    onError: (err: any) => setError(err.response?.data?.message ?? 'Nao foi possivel adicionar a nota.'),
+    onError: (err: any) => {
+      const message = err.response?.data?.message ?? 'Nao foi possivel adicionar a nota.';
+      setError(message);
+      toast.error(message);
+    },
   });
 
   return (
@@ -75,7 +87,7 @@ export default function InterventionsPage() {
           <option value="">Todos os status</option>
           <option value={InterventionStatus.OPEN}>Aberto</option>
           <option value={InterventionStatus.IN_PROGRESS}>Em andamento</option>
-          <option value={InterventionStatus.WAITING_GUARDIAN}>Aguardando responsavel</option>
+          <option value={InterventionStatus.WAITING_GUARDIAN}>Aguardando responsável</option>
           <option value={InterventionStatus.RESOLVED}>Resolvido</option>
           <option value={InterventionStatus.CANCELLED}>Cancelado</option>
         </select>
@@ -138,7 +150,7 @@ export default function InterventionsPage() {
                 >
                   <option value={InterventionStatus.OPEN}>Aberto</option>
                   <option value={InterventionStatus.IN_PROGRESS}>Em andamento</option>
-                  <option value={InterventionStatus.WAITING_GUARDIAN}>Aguardando responsavel</option>
+                  <option value={InterventionStatus.WAITING_GUARDIAN}>Aguardando responsável</option>
                   <option value={InterventionStatus.RESOLVED}>Resolvido</option>
                   <option value={InterventionStatus.CANCELLED}>Cancelado</option>
                 </select>

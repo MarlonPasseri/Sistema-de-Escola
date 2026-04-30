@@ -92,7 +92,7 @@ export class StudentSuccessService {
         occurrences: { orderBy: { date: 'desc' }, take: 20 },
       },
     });
-    if (!student) throw new NotFoundException('Aluno nao encontrado');
+    if (!student) throw new NotFoundException('Aluno não encontrado');
 
     return {
       ...this.decorateRiskStudent(student),
@@ -104,7 +104,7 @@ export class StudentSuccessService {
     const actions = new Set<string>();
     for (const factor of factors) {
       if (['RECENT_ABSENCE', 'LOW_ATTENDANCE_15_DAYS'].includes(factor.code)) {
-        actions.add('Abrir plano de acompanhamento de frequencia');
+        actions.add('Abrir plano de acompanhamento de frequência');
         actions.add('Enviar comunicado ao responsavel');
       }
       if (['LOW_GRADE', 'GRADE_DROP'].includes(factor.code)) {

@@ -11,11 +11,11 @@ export class CreateInterventionDto {
   @IsString()
   riskScoreId?: string;
 
-  @ApiProperty({ example: 'Queda de frequencia e desempenho em Matematica' })
+  @ApiProperty({ example: 'Queda de frequência e desempenho em Matemática' })
   @IsString()
   reason: string;
 
-  @ApiProperty({ example: 'Recuperar frequencia acima de 85% e media acima de 6.0' })
+  @ApiProperty({ example: 'Recuperar frequência acima de 85% e média acima de 6.0' })
   @IsString()
   goal: string;
 

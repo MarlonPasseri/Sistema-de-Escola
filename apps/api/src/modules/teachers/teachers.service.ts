@@ -36,7 +36,7 @@ export class TeachersService {
       where: { id, schoolId, user: { isActive: true } },
       include: TEACHER_INCLUDE,
     });
-    if (!teacher) throw new NotFoundException('Professor nao encontrado');
+    if (!teacher) throw new NotFoundException('Professor não encontrado');
     return teacher;
   }
 
@@ -44,7 +44,7 @@ export class TeachersService {
     const existing = await this.prisma.user.findUnique({
       where: { schoolId_email: { schoolId, email: dto.email } },
     });
-    if (existing) throw new ConflictException('E-mail ja cadastrado nesta escola');
+    if (existing) throw new ConflictException('E-mail já cadastrado nesta escola');
 
     const passwordHash = await argon2.hash(dto.password);
     return this.prisma.$transaction(async (tx) => {
@@ -104,7 +104,7 @@ export class TeachersService {
     const classSubject = await this.prisma.classSubject.findFirst({
       where: { id: dto.classSubjectId, class: { schoolId } },
     });
-    if (!classSubject) throw new NotFoundException('Turma/disciplina nao encontrada');
+    if (!classSubject) throw new NotFoundException('Turma/disciplina não encontrada');
 
     return this.prisma.teacherAssignment.upsert({
       where: { teacherId_classSubjectId: { teacherId, classSubjectId: dto.classSubjectId } },
